@@ -1,3 +1,5 @@
+[![MIT License][license-image]][license-url]
+
 # Tangular - A simple template engine like Angular.js for JavaScript or node.js
 
 - syntax like __Angular.js__ templates
@@ -7,6 +9,7 @@
 - no dependencies
 - 4 kB minified
 - best of use with www.totaljs.com - web application framework for node.js
+- Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/)
 
 ## Example
 
@@ -61,3 +64,10 @@ Tangular.register('currency', function(value, decimals) {
 <div>{{ name }} = VALUE IS ENCODED BY DEFAULT</div>
 <div>{{ name | raw }} = VALUE IS NOT ENCODED</div>
 ```
+
+## Contact
+
+Peter Širka - www.petersirka.eu / <petersirka@gmail.com>
+
+[license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-url]: LICENSE
