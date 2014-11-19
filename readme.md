@@ -1,0 +1,63 @@
+# Tangular - A simple template engine for JavaScript or node.js like Angular.js
+
+- syntax like __Angular.js__ templates
+- supports custom helpers
+- supports conditions (+ nested conditions)
+- supports simple looping (doesn't support nested looping)
+- no dependencies
+- 4 kB minified
+- best of use with <www.totaljs.com> - web application framework for node.js
+
+## Example
+
+```javascript
+var template = Tangular.compile('Hello {{name}} and {{name | raw}}!');
+var output = Tangular.render(template, { name: '<b>world</b>' });
+// Hello &lt;b&gt;world&lt;/b&gt; and <b>world</b>!
+```
+
+## Conditions
+
+```html
+{{if name.length > 0}}
+    <div>OK</div>
+{{else}}
+    <div>NO</div>
+{{endif}}
+```
+
+```html
+{{if name !== null}}
+    <div>NOT NULL</div>
+{{endif}}
+```
+
+## Looping
+
+```html
+{{foreach m in orders}}
+    <h2>Order num.{{m.number}}</h2>
+    <div>{{m.name}}</div>
+{{end}}
+```
+
+## Custom helpers
+
+```javascript
+Tangular.register('currency', function(value, decimals) {
+    // example
+    return value.format(decimals || 0);
+});
+```
+
+```html
+    <div>{{ amount | currency }}</div>
+    <div>{{ amount | currency(2) }}</div>
+```
+
+## Built-in helpers
+
+```html
+    <div>{{ name }} = VALUE IS ENCODED BY DEFAULT</div>
+    <div>{{ name | raw }} = VALUE IS NOT ENCODED</div>
+```
