@@ -184,7 +184,3 @@ Tangular.register('raw', function(value) {
         value = '';
     return value;
 });
-
-var template = Tangular.compile('Hello {{name}} and raw {{name | raw}}! {{foreach var m in model}}{{m.id}}{{end}}');
-var output = Tangular.render(template, { name: '<b>world</b>', model: [{id:1}, {id:2}, {id:3}] });
-console.log(output);

@@ -6,7 +6,7 @@
 - supports simple looping (doesn't support nested looping)
 - no dependencies
 - 4 kB minified
-- best of use with <www.totaljs.com> - web application framework for node.js
+- best of use with www.totaljs.com - web application framework for node.js
 
 ## Example
 
@@ -36,7 +36,7 @@ var output = Tangular.render(template, { name: '<b>world</b>' });
 
 ```html
 {{foreach m in orders}}
-    <h2>Order num.{{m.number}}</h2>
+    <h2>Order num.{{m.number}} (current index: {{$index}})</h2>
     <div>{{m.name}}</div>
 {{end}}
 ```
@@ -51,13 +51,13 @@ Tangular.register('currency', function(value, decimals) {
 ```
 
 ```html
-    <div>{{ amount | currency }}</div>
-    <div>{{ amount | currency(2) }}</div>
+<div>{{ amount | currency }}</div>
+<div>{{ amount | currency(2) }}</div>
 ```
 
 ## Built-in helpers
 
 ```html
-    <div>{{ name }} = VALUE IS ENCODED BY DEFAULT</div>
-    <div>{{ name | raw }} = VALUE IS NOT ENCODED</div>
+<div>{{ name }} = VALUE IS ENCODED BY DEFAULT</div>
+<div>{{ name | raw }} = VALUE IS NOT ENCODED</div>
 ```
