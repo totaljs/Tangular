@@ -8,7 +8,7 @@
 - no dependencies
 - 4 kB minified
 - best of use with www.totaljs.com - web application framework for node.js
-- Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/)
+- Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/1/)
 
 ## Example
 
