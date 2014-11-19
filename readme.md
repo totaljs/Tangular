@@ -1,4 +1,4 @@
-# Tangular - A simple template engine for JavaScript or node.js like Angular.js
+# Tangular - A simple template engine like Angular.js for JavaScript or node.js
 
 - syntax like __Angular.js__ templates
 - supports custom helpers
