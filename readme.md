@@ -8,7 +8,7 @@
 - no dependencies
 - 4 kB minified
 - best of use with www.totaljs.com - web application framework for node.js
-- Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/1/)
+- Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
 - IE >= 9
 
 ## Example
@@ -25,7 +25,7 @@ var output = Tangular.render('Hello {{name}} and {{name | raw}}!', { name: '<b>w
 var template = Tangular.compile('Hello {{name}} and {{name | raw}}!');
 
 // render
-var output = Tangular.render(template);
+var output = template({ name: 'Peter' });
 ```
 
 ## Conditions

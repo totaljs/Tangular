@@ -126,7 +126,9 @@ Tangular.compile = function(str) {
             output += plus + cmd + ';';
     }
 
-    return new Function('helpers', output + ';return $output;');
+    return function(model) {
+        return new Function('helpers', output + ';return $output;').call(model, Thelpers);
+    };
 }
 
 Tangular.append = function(line, skip) {
@@ -166,11 +168,11 @@ Tangular.append = function(line, skip) {
 };
 
 Tangular.render = function(template, model) {
-    if (typeof(template) === 'string')
-        template = Tangular.compile(template);
     if (model === undefined || model === null)
         model = {};
-    return template.call(model, Thelpers);
+    if (typeof(template) === 'string')
+        template = Tangular.compile(template);
+    return template(model);
 };
 
 Tangular.register('encode', function(value) {
