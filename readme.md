@@ -9,6 +9,7 @@
 - 4 kB minified
 - best of use with www.totaljs.com - web application framework for node.js
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/1/)
+- IE >= 9
 
 ## Example
 
