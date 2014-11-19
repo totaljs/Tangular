@@ -118,7 +118,7 @@ Tangular.compile = function(str) {
         if (add) {
             if (arr) {
                 var m = Tangular.append(arr[3]);
-                cmd = 'if (' + m + '===null||' + m + '===undefined)'+m+'=[];for(var i=0,length=' + m + '.length;i<length;i++){var ' + arr[1] + '=' + m + '[i];var $index=' + i + ';';
+                cmd = 'if (' + m + '===null||' + m + '===undefined)'+m+'=[];for(var i=0,length=' + m + '.length;i<length;i++){var ' + arr[1] + '=' + m + '[i];var $index=i;';
             }
             output += cmd;
         }
