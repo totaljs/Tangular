@@ -14,9 +14,18 @@
 ## Example
 
 ```javascript
-var template = Tangular.compile('Hello {{name}} and {{name | raw}}!');
-var output = Tangular.render(template, { name: '<b>world</b>' });
+var output = Tangular.render('Hello {{name}} and {{name | raw}}!', { name: '<b>world</b>' });
 // Hello &lt;b&gt;world&lt;/b&gt; and <b>world</b>!
+```
+
+## Best performance with pre-compile
+
+```javascript
+// cache
+var template = Tangular.compile('Hello {{name}} and {{name | raw}}!');
+
+// render
+var output = Tangular.render(template);
 ```
 
 ## Conditions
