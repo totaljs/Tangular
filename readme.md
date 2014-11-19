@@ -1,5 +1,4 @@
 [![MIT License][license-image]][license-url]
-
 # Tangular - A simple template engine like Angular.js for JavaScript or node.js
 
 - syntax like __Angular.js__ templates
