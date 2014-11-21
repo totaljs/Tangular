@@ -7,6 +7,9 @@ Tangular.register = function(name, fn) {
 
 Tangular.compile = function(str) {
 
+    if (!str)
+        str = '';
+
     var index = -1;
     var builder = [];
     var beg = -1;
@@ -178,7 +181,7 @@ Tangular.render = function(template, model) {
 Tangular.register('encode', function(value) {
     if (value === undefined || value === null)
         value = '';
-    return value.toString().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return value.toString().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 });
 
 Tangular.register('raw', function(value) {
