@@ -53,7 +53,7 @@ Tangular.compile = function(str) {
     length = builder.length;
 
     var plus = '$output+=';
-    var output = 'var $output="";';
+    var output = 'var $s=this;var $output="";';
     var skip = '';
 
     for (var i = 0; i < length; i++) {
@@ -161,7 +161,7 @@ Tangular.append = function(line, skip) {
                 builder.push(param);
                 continue;
             }
-            builder.push('this.' + param);
+            builder.push('$s.' + param);
             continue;
         }
         builder.push(param);
