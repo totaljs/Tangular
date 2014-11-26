@@ -148,7 +148,7 @@ Tangular.append = function(line, skip) {
         var param = params[i];
         var code = param.charCodeAt(0);
 
-        if ((code > 64 && code < 91) || (code > 96 && code < 123)) {
+        if ((code > 64 && code < 91) || (code > 96 && code < 123) || (code === 36 || code === 95)) {
 
             var param5 = param.substring(0, 5);
 
