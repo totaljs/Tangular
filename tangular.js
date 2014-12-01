@@ -120,7 +120,7 @@ Tangular.compile = function(str) {
 
         if (add) {
             if (arr) {
-                var m = Tangular.append(arr[3]);
+                var m = Tangular.append(arr[3], '', true);
                 cmd = 'if (' + m + '===null||' + m + '===undefined)'+m+'=[];for(var i=0,length=' + m + '.length;i<length;i++){var ' + arr[1] + '=' + m + '[i];var $index=i;';
             }
             output += cmd;
@@ -134,7 +134,7 @@ Tangular.compile = function(str) {
     };
 }
 
-Tangular.append = function(line, skip) {
+Tangular.append = function(line, skip, each) {
 
     var builder = [];
     var params = line.split(' ');
@@ -161,6 +161,10 @@ Tangular.append = function(line, skip) {
                 builder.push(param);
                 continue;
             }
+
+            if (each && param.match(/^\$index(\s|$)/g) !== null)
+                continue;
+
             builder.push('$s.' + param);
             continue;
         }
