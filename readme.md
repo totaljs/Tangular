@@ -4,7 +4,7 @@
 - syntax like __Angular.js__ templates
 - supports custom helpers
 - supports conditions (+ nested conditions)
-- supports simple looping (doesn't support nested looping)
+- supports loops (+ nested loops)
 - no dependencies
 - 4 kB minified
 - best of use with www.totaljs.com - web application framework for node.js
