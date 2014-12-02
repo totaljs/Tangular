@@ -35,13 +35,13 @@ var output = template({ name: 'Peter' });
     <div>OK</div>
 {{else}}
     <div>NO</div>
-{{end}}
+{{endif}}
 ```
 
 ```html
 {{if name !== null}}
     <div>NOT NULL</div>
-{{end}}
+{{endif}}
 ```
 
 ## Looping

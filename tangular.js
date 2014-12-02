@@ -126,11 +126,11 @@ Tangular.compile = function(str) {
             }
             cmd = helper.replace('@', Tangular.append(cmd, skip, isEach).trim());
         } else
-            cmd = Tangular.append(cmd, skip).trim();
+            cmd = Tangular.append(cmd, skip, isEach).trim();
 
         if (add) {
             if (arr) {
-                var m = Tangular.append(arr[3], skip);
+                var m = Tangular.append(arr[3], skip, isEach);
                 cmd = 'if (' + m + '===null||' + m + '===undefined)'+m+'=[];(function(){for(var i=0,length=' + m + '.length;i<length;i++){var ' + arr[1] + '=' + m + '[i];var $index=i;';
             }
             output += cmd;
