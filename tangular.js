@@ -96,7 +96,10 @@ Tangular.compile = function(str) {
             cmd = '} else {';
             add = true;
         } else if (cmd3 === 'end' || cmd.substring(0, 6) === 'endfor') {
-            cmd = '}})();';
+            if (skip.length === 0)
+                cmd = '}';
+            else
+                cmd = '}})();';
             skip.pop();
             add = true;
             eachCount--;
