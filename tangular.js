@@ -155,7 +155,7 @@ Tangular.append = function(line, skip, each) {
         var param = params[i];
         var code = param.charCodeAt(0);
 
-        if ((code > 64 && code < 91) || (code > 96 && code < 123) || (code === 36 || code === 95)) {
+        if ((code > 64 && code < 91) || (code > 96 && code < 123) || (code === 36 || code === 95 || code === 33)) {
 
             var param5 = param.substring(0, 5);
 
@@ -164,7 +164,11 @@ Tangular.append = function(line, skip, each) {
                 continue;
             }
 
+            var negative = param.substring(0, 1) === '!';
             var skipnow = false;
+
+            if (negative)
+                param = param.substring(1);
 
             for (var j = 0; j < sl; j++) {
                 if (param.substring(0, skip[j].length) !== skip[j])
@@ -174,16 +178,16 @@ Tangular.append = function(line, skip, each) {
             }
 
             if (skipnow) {
-                builder.push(param);
+                builder.push((negative ? '!' : '') + param);
                 continue;
             }
 
             if (each && param.match(/^\$index(\s|$)/g) !== null) {
-                builder.push(param);
+                builder.push((negative ? '!' : '') + param);
                 continue;
             }
 
-            builder.push('$s.' + param);
+            builder.push((negative ? '!' : '') + '$s.' + param);
             continue;
         }
 
