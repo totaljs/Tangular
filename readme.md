@@ -57,6 +57,8 @@ var output = template({ name: 'Peter' });
 
 ```javascript
 Tangular.register('currency', function(value, decimals) {
+    // this === MODEL/OBJECT
+    // console.log(this);
     // example
     return value.format(decimals || 0);
 });

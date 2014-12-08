@@ -124,6 +124,8 @@ Tangular.compile = function(str) {
                 if (Thelpers[name] === undefined)
                     throw new Error('Helper: "' + name + '" not found.');
             }
+            index = helper.indexOf('(');
+            helper = helper.substring(0, index) + '.call($s,' + helper.substring(index + 1);
             cmd = helper.replace('@', Tangular.append(cmd, skip, isEach).trim());
         } else
             cmd = Tangular.append(cmd, skip, isEach).trim();
