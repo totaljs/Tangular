@@ -85,7 +85,7 @@ Tangular.compile = function(str) {
             add = true;
             isEach = true;
             eachCount++;
-        }
+       }
 
         var cmd5 = cmd.substring(0, 5);
 
@@ -176,8 +176,14 @@ Tangular.append = function(line, skip, each) {
                 param = param.substring(1);
 
             for (var j = 0; j < sl; j++) {
-                if (param.substring(0, skip[j].length) !== skip[j])
+                var l = skip[j].length;
+                if (param.substring(0, l) !== skip[j])
                     continue;
+                if (param.length !== l) {
+                    var c = param.substring(l, l + 1);
+                    if (c !== '.' && c !== '+')
+                        continue;
+                }
                 skipnow = true;
                 break;
             }
