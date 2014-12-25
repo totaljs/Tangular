@@ -85,7 +85,7 @@ Tangular.compile = function(str) {
 
         var cmd5 = cmd.substring(0, 5);
 
-        if (cmd5 === 'endif') {
+        if (cmd5 === 'endif' || cmd.substring(0, 2) === 'fi') {
             cmd = '}';
             add = true;
         } else if (cmd5 === 'else') {
