@@ -54,7 +54,9 @@ Tangular.compile = function(str) {
 
     var plus = '$output+=';
     var output = 'var $s=this;var $output="";';
-    var skip = '';
+    var skip = [];
+    var isEach = false;
+    var eachCount = 0;
 
     for (var i = 0; i < length; i++) {
 
@@ -79,9 +81,11 @@ Tangular.compile = function(str) {
             arr = cmd.split(' ');
             if (arr[1] === 'var')
                 arr.splice(1, 1);
-            skip = arr[1];
+            skip.push(arr[1]);
             add = true;
-        }
+            isEach = true;
+            eachCount++;
+       }
 
         var cmd5 = cmd.substring(0, 5);
 
@@ -92,9 +96,15 @@ Tangular.compile = function(str) {
             cmd = '} else {';
             add = true;
         } else if (cmd3 === 'end' || cmd.substring(0, 6) === 'endfor') {
-            cmd = '}';
-            skip = '';
+            if (skip.length === 0)
+                cmd = '}';
+            else
+                cmd = '}})();';
+            skip.pop();
             add = true;
+            eachCount--;
+            if (eachCount === 0)
+                isEach = false;
         }
 
         if (!add) {
@@ -114,14 +124,16 @@ Tangular.compile = function(str) {
                 if (Thelpers[name] === undefined)
                     throw new Error('Helper: "' + name + '" not found.');
             }
-            cmd = helper.replace('@', Tangular.append(cmd, skip).trim());
+            index = helper.indexOf('(');
+            helper = helper.substring(0, index) + '.call($s,' + helper.substring(index + 1);
+            cmd = helper.replace('@', Tangular.append(cmd, skip, isEach).trim());
         } else
-            cmd = Tangular.append(cmd, skip).trim();
+            cmd = Tangular.append(cmd, skip, isEach).trim();
 
         if (add) {
             if (arr) {
-                var m = Tangular.append(arr[3]);
-                cmd = 'if (' + m + '===null||' + m + '===undefined)'+m+'=[];for(var i=0,length=' + m + '.length;i<length;i++){var ' + arr[1] + '=' + m + '[i];var $index=i;';
+                var m = Tangular.append(arr[3], skip, isEach);
+                cmd = 'if (' + m + '===null||' + m + '===undefined)'+m+'=[];(function(){for(var i=0,length=' + m + '.length;i<length;i++){var ' + arr[1] + '=' + m + '[i];var $index=i;';
             }
             output += cmd;
         }
@@ -134,21 +146,21 @@ Tangular.compile = function(str) {
     };
 }
 
-Tangular.append = function(line, skip) {
+Tangular.append = function(line, skip, each) {
 
     var builder = [];
     var params = line.split(' ');
 
     if (skip === undefined)
-        skip = '';
+        skip = [];
 
-    var length_skip = skip.length;
+    var sl = skip.length;
 
     for (var i = 0, length = params.length; i < length; i++) {
         var param = params[i];
         var code = param.charCodeAt(0);
 
-        if ((code > 64 && code < 91) || (code > 96 && code < 123) || (code === 36 || code === 95)) {
+        if ((code > 64 && code < 91) || (code > 96 && code < 123) || (code === 36 || code === 95 || code === 33)) {
 
             var param5 = param.substring(0, 5);
 
@@ -157,13 +169,39 @@ Tangular.append = function(line, skip) {
                 continue;
             }
 
-            if (length_skip > 0 && param.substring(0, length_skip) === skip) {
-                builder.push(param);
+            var negative = param.substring(0, 1) === '!';
+            var skipnow = false;
+
+            if (negative)
+                param = param.substring(1);
+
+            for (var j = 0; j < sl; j++) {
+                var l = skip[j].length;
+                if (param.substring(0, l) !== skip[j])
+                    continue;
+                if (param.length !== l) {
+                    var c = param.substring(l, l + 1);
+                    if (c !== '.' && c !== '+')
+                        continue;
+                }
+                skipnow = true;
+                break;
+            }
+
+            if (skipnow) {
+                builder.push((negative ? '!' : '') + param);
                 continue;
             }
-            builder.push('$s.' + param);
+
+            if (each && param.match(/^\$index(\s|$)/g) !== null) {
+                builder.push((negative ? '!' : '') + param);
+                continue;
+            }
+
+            builder.push((negative ? '!' : '') + '$s.' + param);
             continue;
         }
+
         builder.push(param);
     }
 
