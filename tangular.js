@@ -198,6 +198,12 @@ Tangular.append = function(line, skip, each) {
                 continue;
             }
 
+            var c = param.trim().substring(0, 1);
+            if (c === '=' || c === '.' || c === ',' || c === '!' || c === '+' || c === '-') {
+                builder.push((negative ? '!' : '') + param);
+                continue;
+            }
+
             builder.push((negative ? '!' : '') + '$s.' + param);
             continue;
         }
