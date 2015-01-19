@@ -1,15 +1,24 @@
 [![MIT License][license-image]][license-url]
 # Tangular - A simple template engine like Angular.js for JavaScript or node.js
 
+- only __2.9 kB__ (minified, without GZIP compression)
 - syntax like __Angular.js__ templates
 - supports custom helpers
 - supports conditions (+ nested conditions)
 - supports loops (+ nested loops)
 - no dependencies
 - 4 kB minified
-- best of use with www.totaljs.com - web application framework for node.js
+- IE `>= 9`
+- best of use with [www.totaljs.com - web application framework for node.js](http://www.totaljs.com)
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
-- IE >= 9
+- [__IMPORTANT DEMO: jComponent + Tangular + jRouting__ = jctajr.js](http://clientside.totaljs.com/jctajr.html)
+- __PLEASE LOOK INTO THE EXAMPLE__
+
+__YOU MUST SEE:__
+
+- [jRouting](https://github.com/petersirka/jRouting)
+- [jComponent](https://github.com/petersirka/jComponent)
+- [jQuery two way bindings](https://github.com/petersirka/jquery.bindings)
 
 ## Example
 
