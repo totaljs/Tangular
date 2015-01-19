@@ -7,7 +7,6 @@
 - supports conditions (+ nested conditions)
 - supports loops (+ nested loops)
 - no dependencies
-- 4 kB minified
 - IE `>= 9`
 - best of use with [www.totaljs.com - web application framework for node.js](http://www.totaljs.com)
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
