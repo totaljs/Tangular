@@ -146,72 +146,62 @@ Tangular.compile = function(str) {
     };
 }
 
-Tangular.append = function(line, skip, each) {
-
-    var builder = [];
-    var params = line.split(' ');
+Tangular.append = function(line, skip) {
 
     if (skip === undefined)
         skip = [];
 
-    var sl = skip.length;
+    return line.replace(/[\_\$a-zA-Z0-9\s]+/g, function(word, index, text) {
 
-    for (var i = 0, length = params.length; i < length; i++) {
-        var param = params[i];
-        var code = param.charCodeAt(0);
+        var c = text.substring(index - 1, index);
+        var skip = false;
+        var updated = word.trim();
 
-        if ((code > 64 && code < 91) || (code > 96 && code < 123) || (code === 36 || code === 95 || code === 33)) {
+        if (c === '"' || c === '\'' || c === '.')
+            skip = true;
 
-            var param5 = param.substring(0, 5);
-
-            if (param.substring(0, 2) === 'if' || param5 === 'endif' || param5 === 'else' || param.substring(0, 6) === 'endfor' || param.substring(0, 7) === 'foreach') {
-                builder.push(param);
-                continue;
-            }
-
-            var negative = param.substring(0, 1) === '!';
-            var skipnow = false;
-
-            if (negative)
-                param = param.substring(1);
-
-            for (var j = 0; j < sl; j++) {
-                var l = skip[j].length;
-                if (param.substring(0, l) !== skip[j])
-                    continue;
-                if (param.length !== l) {
-                    var c = param.substring(l, l + 1);
-                    if (c !== '.' && c !== '+')
-                        continue;
-                }
-                skipnow = true;
-                break;
-            }
-
-            if (skipnow) {
-                builder.push((negative ? '!' : '') + param);
-                continue;
-            }
-
-            if (each && param.match(/^\$index(\s|$)/g) !== null) {
-                builder.push((negative ? '!' : '') + param);
-                continue;
-            }
-
-            var c = param.trim().substring(0, 1);
-            if (c === '=' || c === '.' || c === ',' || c === '!' || c === '+' || c === '-') {
-                builder.push((negative ? '!' : '') + param);
-                continue;
-            }
-
-            builder.push((negative ? '!' : '') + '$s.' + param);
-            continue;
+        switch (word.trim()) {
+            case 'else':
+            case 'end':
+            case 'endfor':
+            case 'endif':
+            case 'fi':
+            case 'foreach':
+            case 'if':
+                return word;
         }
 
-        builder.push(param);
-    }
+        if (updated === '')
+            return '';
 
-    return builder.join(' ');
+        if (skip)
+            return word;
+
+        skip = false;
+
+        for (var j = 0, length = skip.length; j < length; j++) {
+
+            var l = skip[j].length;
+
+            if (updated.substring(0, l) !== skip[j])
+                continue;
+
+            if (updated.length !== l) {
+                var c = updated.substring(l, l + 1);
+                if (c !== '.' && c !== '+')
+                    continue;
+            }
+
+            skip = true;
+            break;
+        }
+
+        if (skip)
+            return updated;
+
+        c = updated.substring(0, 1);
+        return '$s.' + updated;
+    });
 };
 
 Tangular.render = function(template, model) {
