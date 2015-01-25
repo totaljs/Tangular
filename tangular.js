@@ -200,6 +200,10 @@ Tangular.append = function(line, skip) {
             return updated;
 
         c = updated.substring(0, 1);
+        var code = c.charCodeAt(0);
+
+        if (code > 47 && code < 58)
+            return updated;
         return '$s.' + updated;
     });
 };
