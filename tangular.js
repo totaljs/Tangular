@@ -146,10 +146,10 @@ Tangular.compile = function(str) {
     };
 }
 
-Tangular.append = function(line, skip) {
+Tangular.append = function(line, skipl) {
 
-    if (skip === undefined)
-        skip = [];
+    if (skipl === undefined)
+        skipl = [];
 
     return line.replace(/[\_\$a-zA-Z0-9\s]+/g, function(word, index, text) {
 
@@ -179,11 +179,11 @@ Tangular.append = function(line, skip) {
 
         skip = false;
 
-        for (var j = 0, length = skip.length; j < length; j++) {
+        for (var j = 0, length = skipl.length; j < length; j++) {
 
-            var l = skip[j].length;
+            var l = skipl[j].length;
 
-            if (updated.substring(0, l) !== skip[j])
+            if (updated.substring(0, l) !== skipl[j])
                 continue;
 
             if (updated.length !== l) {
@@ -204,6 +204,7 @@ Tangular.append = function(line, skip) {
 
         if (code > 47 && code < 58)
             return updated;
+
         return '$s.' + updated;
     });
 };
