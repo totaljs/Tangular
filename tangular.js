@@ -169,6 +169,10 @@ Tangular.append = function(line, skipl) {
             case 'foreach':
             case 'if':
                 return word;
+            case '$index':
+                if (!skip)
+                    return word;
+                break;
         }
 
         if (updated === '')
