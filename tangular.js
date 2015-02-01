@@ -146,7 +146,7 @@ Tangular.compile = function(str) {
     };
 }
 
-Tangular.append = function(line, skipl) {
+Tangular.append = function(line, skipl, isEach) {
 
     if (skipl === undefined)
         skipl = [];
