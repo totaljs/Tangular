@@ -151,7 +151,9 @@ Tangular.append = function(line, skipl, isEach) {
     if (skipl === undefined)
         skipl = [];
 
-    return line.replace(/[\_\$a-zA-Z0-9\s]+/g, function(word, index, text) {
+    return line.replace(/[\_\$a-zá-žÁ-ŽA-Z0-9\s]+/g, function(word, index, text) {
+
+        console.log(word, text);
 
         var c = text.substring(index - 1, index);
         var skip = false;
