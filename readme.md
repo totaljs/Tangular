@@ -10,8 +10,6 @@
 - IE `>= 9`
 - best of use with [www.totaljs.com - web application framework for node.js](http://www.totaljs.com)
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
-- [__IMPORTANT DEMO: jComponent + Tangular + jRouting__ = jctajr.js](http://clientside.totaljs.com/jctajr.html)
-- __PLEASE LOOK INTO THE EXAMPLE__
 
 __YOU MUST SEE:__
 
