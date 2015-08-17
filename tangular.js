@@ -233,3 +233,6 @@ Tangular.register('raw', function(value) {
         value = '';
     return value;
 });
+
+if (typeof(exports) !== 'undefined')
+    module.exports = Tangular;
