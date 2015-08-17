@@ -26,7 +26,7 @@ __YOU MUST SEE:__
 npm install tangular
 ```
 
-```javacript
+```javascript
 var Tangular = require('tangular');
 ```
 
