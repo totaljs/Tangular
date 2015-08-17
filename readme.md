@@ -13,15 +13,22 @@
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
 - [__DEMO EXAMPLE__](http://example.jcomponent.org)
 
-```bash
-npm install tangular
-```
-
 __YOU MUST SEE:__
 
 - [jComponent - A component library for jQuery](https://github.com/petersirka/jComponent)
 - [jRouting - HTML 5 routing via History API](https://github.com/petersirka/jRouting)
 - [jQuery two way bindings](https://github.com/petersirka/jquery.bindings)
+
+
+## Node.js
+
+```bash
+npm install tangular
+```
+
+```javacript
+var Tangular = require('tangular');
+```
 
 ## Example
 
