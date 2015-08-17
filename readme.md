@@ -1,5 +1,6 @@
 [![MIT License][license-image]][license-url]
-# Tangular - A simple template engine like Angular.js for JavaScript or node.js
+# Tangular
+> A simple template engine like Angular.js for JavaScript or node.js
 
 - only __3.0 kB__
 - syntax like __Angular.js__ templates
@@ -11,6 +12,10 @@
 - best of use with [www.totaljs.com - web application framework for node.js](http://www.totaljs.com)
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
 - [__DEMO EXAMPLE__](http://example.jcomponent.org)
+
+```bash
+npm install tangular
+```
 
 __YOU MUST SEE:__
 
