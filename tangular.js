@@ -1,8 +1,9 @@
-var Thelpers = {};
 var Tangular = {};
+Tangular.helpers = {};
 
 Tangular.register = function(name, fn) {
-    Thelpers[name] = fn;
+    Tangular.helpers[name] = fn;
+    return Tangular;
 };
 
 Tangular.compile = function(str) {
@@ -121,7 +122,7 @@ Tangular.compile = function(str) {
                 }
 
                 helper = 'helpers.' + helper;
-                if (Thelpers[name] === undefined)
+                if (Tangular.helpers[name] === undefined)
                     throw new Error('Helper: "' + name + '" not found.');
             }
             index = helper.indexOf('(');
@@ -142,7 +143,7 @@ Tangular.compile = function(str) {
     }
 
     return function(model) {
-        return new Function('helpers', output + ';return $output;').call(model, Thelpers);
+        return new Function('helpers', output + ';return $output;').call(model, Tangular.helpers);
     };
 }
 

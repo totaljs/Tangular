@@ -1,7 +1,7 @@
 [![MIT License][license-image]][license-url]
 # Tangular - A simple template engine like Angular.js for JavaScript or node.js
 
-- only __2.0 kB__
+- only __3.0 kB__
 - syntax like __Angular.js__ templates
 - supports custom helpers
 - supports conditions (+ nested conditions)
@@ -69,6 +69,9 @@ Tangular.register('currency', function(value, decimals) {
     // example
     return value.format(decimals || 0);
 });
+
+// Calling custom helper in JavaScript, e.g.:
+Tangular.helpers.currency(100, 2);
 ```
 
 ```html
