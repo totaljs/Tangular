@@ -146,7 +146,6 @@ Tangular.compile = function(str) {
     }
 
     return function(model) {
-        console.log(output);
         return new Function('helpers', output + ';return $output;').call(model, Tangular.helpers);
     };
 }
