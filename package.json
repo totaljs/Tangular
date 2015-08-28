@@ -1,6 +1,6 @@
 {
   "name": "tangular",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A simple template engine like Angular.js for JavaScript or node.js",
   "main": "./tangular.js",
   "keywords": [

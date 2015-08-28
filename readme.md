@@ -49,6 +49,8 @@ var output = template({ name: 'Peter' });
 
 ## Conditions
 
+- supports `else if`
+
 ```html
 {{if name.length > 0}}
     <div>OK</div>

@@ -96,6 +96,9 @@ Tangular.compile = function(str) {
         } else if (cmd5 === 'else') {
             cmd = '} else {';
             add = true;
+        } else if (cmd.substring(0, 7) === 'else if') {
+            cmd = '}else if( ' + cmd.substring(8) + '){';
+            add = true;
         } else if (cmd3 === 'end' || cmd.substring(0, 6) === 'endfor') {
             if (skip.length === 0)
                 cmd = '}';
@@ -143,6 +146,7 @@ Tangular.compile = function(str) {
     }
 
     return function(model) {
+        console.log(output);
         return new Function('helpers', output + ';return $output;').call(model, Tangular.helpers);
     };
 }
@@ -169,6 +173,7 @@ Tangular.append = function(line, skipl) {
             case 'fi':
             case 'foreach':
             case 'if':
+            case 'else if':
                 return word;
             case '$index':
                 if (!skip)
