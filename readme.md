@@ -84,6 +84,10 @@ Tangular.register('currency', function(value, decimals) {
     return value.format(decimals || 0);
 });
 
+Tangular.register('plus', function(value, count) {
+    return value + (count || 1);
+});
+
 // Calling custom helper in JavaScript, e.g.:
 Tangular.helpers.currency(100, 2);
 ```
@@ -91,6 +95,9 @@ Tangular.helpers.currency(100, 2);
 ```html
 <div>{{ amount | currency }}</div>
 <div>{{ amount | currency(2) }}</div>
+
+<!-- MULTIPLE HELPERS -->
+<div>{{ count | plus | plus(2) | plus | plus(3) }}</div>
 ```
 
 ## Built-in helpers
