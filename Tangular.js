@@ -69,7 +69,6 @@ Tangular.compile = function(str) {
 		var cmd = builder[i];
 		var add = false;
 		var index = cmd.lastIndexOf('|');
-		var helper = 'helpers.encode(@)';
 		var arr = null;
 		var cmd3 = cmd.substring(0, 3);
 
@@ -139,7 +138,7 @@ Tangular.helper = function(line, skip, isEach) {
 
 	if (index === -1) {
 		property = Tangular.append(line.trim(), skip, isEach).trim();
-		return 'helpers.encode(' + property + ')';
+		return 'helpers.encode.call($s,' + property + ')';
 	}
 
 	property = Tangular.append(line.substring(0, index).trim(), skip, isEach).trim();
@@ -155,10 +154,10 @@ Tangular.helper = function(line, skip, isEach) {
 
 		if (index === -1) {
 			name = helper;
-			helper = '($t)';
+			helper = '.call($s,$t)';
 		} else {
 			name = helper.substring(0, index);
-			helper = '($t,' + helper.substring(index + 1);
+			helper = '.call($s,$t,' + helper.substring(index + 1);
 		}
 
 		if (!Tangular.helpers[name])
