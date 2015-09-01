@@ -2,7 +2,7 @@
   "name": "tangular",
   "version": "1.1.1",
   "description": "A simple template engine like Angular.js for JavaScript or node.js",
-  "main": "./tangular.js",
+  "main": "./Tangular.js",
   "keywords": [
     "Angular",
     "Handlebars",
