@@ -107,7 +107,7 @@ Tangular.helpers.currency(100, 2);
 <div>{{ name | raw }} = VALUE IS NOT ENCODED</div>
 ```
 
-## Custom options
+## Custom settings
 
 ```javascript
 // Default
