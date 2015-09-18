@@ -107,6 +107,16 @@ Tangular.helpers.currency(100, 2);
 <div>{{ name | raw }} = VALUE IS NOT ENCODED</div>
 ```
 
+## Custom options
+
+```javascript
+// Default
+Tangular.settings.delimiters = ['{{', '}}'];
+
+// You can change it to e.g.:
+Tangular.settings.delimiters = ['(', ')'];
+```
+
 ## Contact
 
 Peter Širka - www.petersirka.eu / <petersirka@gmail.com>

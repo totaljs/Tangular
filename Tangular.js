@@ -20,11 +20,10 @@ Tangular.compile = function(str) {
 	var end = 0;
 	var length = str.length;
 	var count = 0;
-
+	var len = Tangular.settings.delimiters[0].length;
 	while (length > index++) {
 
-		var c = str.substring(index, index + 2);
-
+		var c = str.substring(index, index + len);
 		if (beg !== -1) {
 			if (c === Tangular.settings.delimiters[1]) {
 				if (count > 0) {
@@ -32,7 +31,7 @@ Tangular.compile = function(str) {
 					continue;
 				}
 				builder.push(str.substring(beg, index).trim());
-				end = index + 2;
+				end = index + len;
 				beg = -1;
 				continue;
 			}
@@ -41,6 +40,7 @@ Tangular.compile = function(str) {
 		}
 
 		if (c === Tangular.settings.delimiters[0]) {
+
 			if (beg !== -1) {
 				count++;
 				continue;
@@ -48,7 +48,7 @@ Tangular.compile = function(str) {
 
 			var text = str.substring(end, index);
 			builder.push(text ? 'unescape("' + escape(text) + '")' : '""');
-			beg = index + 2;
+			beg = index + len;
 			continue;
 		}
 	}
