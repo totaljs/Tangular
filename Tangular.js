@@ -1,5 +1,8 @@
 var Tangular = {};
 Tangular.helpers = {};
+Tangular.settings = {
+	delimiters: ['{{', '}}']
+};
 
 Tangular.register = function(name, fn) {
 	Tangular.helpers[name] = fn;
@@ -23,7 +26,7 @@ Tangular.compile = function(str) {
 		var c = str.substring(index, index + 2);
 
 		if (beg !== -1) {
-			if (c === '}}') {
+			if (c === Tangular.settings.delimiters[1]) {
 				if (count > 0) {
 					count--;
 					continue;
@@ -37,7 +40,7 @@ Tangular.compile = function(str) {
 			continue;
 		}
 
-		if (c === '{{') {
+		if (c === Tangular.settings.delimiters[0]) {
 			if (beg !== -1) {
 				count++;
 				continue;
