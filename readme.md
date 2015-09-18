@@ -117,9 +117,13 @@ Tangular.settings.delimiters = ['{{', '}}'];
 Tangular.settings.delimiters = ['(', ')'];
 ```
 
-## Contact
 
-Peter Širka - www.petersirka.eu / <petersirka@gmail.com>
+## Contributors
+
+| Contributor | Type | E-mail |
+|-------------|------|--------|
+| [Peter Širka](https://www.petersirka.eu) | author  | <petersirka@gmail.com> |
+| [Константин](https://github.com/bashkos) | contributor |
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: license.txt

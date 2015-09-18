@@ -25,5 +25,12 @@
     "url": "https://github.com/petersirka/Tangular/issues"
   },
   "homepage": "https://github.com/petersirka/Tangular#readme",
-  "license": "MIT"
+  "license": "MIT",
+  "contributors": [{
+      "name": "Peter Širka",
+      "email": "petersirka@gmail.com"
+  }, {
+      "name": "Константин",
+      "email": ""
+  }]
 }
