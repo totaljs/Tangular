@@ -130,7 +130,13 @@ Tangular.compile = function(str) {
 	}
 
 	return function(model) {
-		return new Function('helpers', output + ';return $output;').call(model, Tangular.helpers);
+		return new Function('helpers', output + ';return $output;').call(model, function(name) {
+			var fn = Tangular.helpers[name];
+			if (fn)
+				return fn;
+			console.warn('Tangular helper "' + name + '" not found.');
+			return function(value) { return value === undefined ? 'undefined' : value === null ? 'null' : value.toString(); };
+		});
 	};
 }
 
@@ -141,7 +147,7 @@ Tangular.helper = function(line, skip, isEach) {
 
 	if (index === -1) {
 		property = Tangular.append(line.trim(), skip, isEach).trim();
-		return 'helpers.encode.call($s,' + property + ')';
+		return 'helpers("encode").call($s,' + property + ')';
 	}
 
 	property = Tangular.append(line.substring(0, index).trim(), skip, isEach).trim();
@@ -163,10 +169,7 @@ Tangular.helper = function(line, skip, isEach) {
 			helper = '.call($s,$t,' + helper.substring(index + 1);
 		}
 
-		if (!Tangular.helpers[name])
-			throw new Error('Helper: "' + name + '" not found.');
-
-		helper = '$t=helpers["' + name + '"]' + helper;
+		helper = '$t=helpers("' + name + '")' + helper;
 		output += helper + ';';
 	}
 
