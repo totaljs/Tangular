@@ -126,7 +126,7 @@ Tangular.compile = function(str) {
 			output += cmd;
 		}
 		else
-			output += 'try { '+ cmd +'; '+plus + cmd + ' } catch(e) { '+cmd.split(',')[0]+',"")'+'; } ;';
+			output += plus + cmd + ';';
 	}
 
 	return function(model) {
