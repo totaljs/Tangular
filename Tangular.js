@@ -1,5 +1,6 @@
 var Tangular = {};
 Tangular.helpers = {};
+Tangular.version = 'v1.3.0';
 Tangular.settings = {
 	delimiters: ['{{', '}}']
 };
