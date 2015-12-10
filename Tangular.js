@@ -1,8 +1,10 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.3.0';
+Tangular.version = 'v1.4.0';
+Tangular.cache = {};
+Tangular.debug = false;
 Tangular.settings = {
-	delimiters: ['{{', '}}']
+	delimiters: ['{{', '}}'],
 };
 
 Tangular.register = function(name, fn) {
@@ -22,6 +24,7 @@ Tangular.compile = function(str) {
 	var length = str.length;
 	var count = 0;
 	var len = Tangular.settings.delimiters[0].length;
+	var text;
 	while (length > index++) {
 
 		var c = str.substring(index, index + len);
@@ -47,18 +50,19 @@ Tangular.compile = function(str) {
 				continue;
 			}
 
-			var text = str.substring(end, index);
+			text = str.substring(end, index);
 			builder.push(text ? 'unescape("' + escape(text) + '")' : '""');
 			beg = index + len;
 			continue;
 		}
 	}
 
-	builder.push('unescape("' + escape(str.substring(end, length)) + '")');
+	text = str.substring(end, length);
+	builder.push(text ? 'unescape("' + escape(text) + '")' : '""');
 	length = builder.length;
 
 	var plus = '$output+=';
-	var output = 'var $s=this,$output="",$t;';
+	var output = 'var $s=this,$output="",$t,$v;';
 	var skip = [];
 	var isEach = false;
 	var eachCount = 0;
@@ -103,10 +107,10 @@ Tangular.compile = function(str) {
 			cmd = '}else if( ' + cmd.substring(8) + '){';
 			add = true;
 		} else if (cmd3 === 'end' || cmd.substring(0, 6) === 'endfor') {
-			if (skip.length === 0)
-				cmd = '}';
+			if (skip.length)
+				cmd = '}})()}';
 			else
-				cmd = '}})();';
+				cmd = '}}';
 			skip.pop();
 			add = true;
 			eachCount--;
@@ -115,19 +119,28 @@ Tangular.compile = function(str) {
 		}
 
 		if (!add) {
-			cmd = Tangular.helper(cmd, skip, isEach);
-		} else
-			cmd = Tangular.append(cmd, skip, isEach).trim();
+			cmd = Tangular.helper(cmd, skip, isEach, '$s');
+		} else {
+			cmd = Tangular.append(cmd, skip, isEach, '$s').trim();
+		}
 
 		if (add) {
 			if (arr) {
-				var m = Tangular.append(arr[3], skip, isEach);
-				cmd = 'if (' + m + '===null||' + m + '===undefined)'+m+'=[];(function(){for(var i=0,length=' + m + '.length;i<length;i++){var ' + arr[1] + '=' + m + '[i];var $index=i;';
+				var m = Tangular.append(arr[3], skip, isEach, '$s');
+				cmd = 'if (' + m + '&&' + m + '.length){(function(){for(var i=0,length=' + m + '.length;i<length;i++){var ' + arr[1] + '=' + m + '[i];var $index=i;';
 			}
 			output += cmd;
 		}
 		else
 			output += plus + cmd + ';';
+	}
+
+	if (Tangular.debug) {
+		console.log('Tangular:');
+		console.log('function(helpers) {' + output + ';return $output;}');
+		console.log(str.trim());
+		console.log('---------------------------');
+		console.log('');
 	}
 
 	return function(model) {
@@ -141,13 +154,13 @@ Tangular.compile = function(str) {
 	};
 }
 
-Tangular.helper = function(line, skip, isEach) {
+Tangular.helper = function(line, skip, isEach, model) {
 
 	var index = line.indexOf('|');
 	var property;
 
 	if (index === -1) {
-		property = Tangular.append(line.trim(), skip, isEach).trim();
+		property = Tangular.append(line.trim(), skip, isEach, '$s').trim();
 		return 'helpers("encode").call($s,' + property + ')';
 	}
 
@@ -177,12 +190,12 @@ Tangular.helper = function(line, skip, isEach) {
 	return '"";$t=' + property + ';' + output + '$output+=$t';
 };
 
-Tangular.append = function(line, skipl) {
+Tangular.append = function(line, skipl, isEach, model) {
 
 	if (skipl === undefined)
 		skipl = [];
 
-	return line.replace(/[\_\$a-zá-žÁ-ŽA-Z0-9\s]+/g, function(word, index, text) {
+	return line.replace(/[\_\$a-zá-žÁ-ŽA-Z0-9\s\.]+/g, function(word, index, text) {
 
 		var c = text.substring(index - 1, index);
 		var skip = false;
@@ -241,8 +254,33 @@ Tangular.append = function(line, skipl) {
 		if (code > 47 && code < 58)
 			return updated;
 
-		return '$s.' + updated;
+		return 'Tangular.$wrap(' + (model || '$s') + ',"' + updated + '")';
 	});
+};
+
+Tangular.$wrap = function(model, path, def) {
+
+	var arr = Tangular.cache[path];
+	if (arr === null)
+		return model[path];
+
+	if (!arr) {
+		arr = path.split('.');
+		Tangular.cache[path] = arr.length === 1 ? null : arr;
+	}
+
+	if (arr.length === 1)
+		return model[path];
+
+	var tmp = model;
+	for (var i = 0, length = arr.length; i < length; i++) {
+		var p = arr[i];
+		tmp = tmp[p];
+		if (!tmp)
+			return i + 1 === length ? tmp : def;
+	}
+
+	return tmp;
 };
 
 Tangular.render = function(template, model) {
@@ -264,6 +302,13 @@ Tangular.register('raw', function(value) {
 		value = '';
 	return value;
 });
+
+if (typeof(global) !== 'undefined')
+	global.Tangular = Tangular;
+else if (typeof(window) !== 'undefined') {
+	if (!window.Tangular)
+		window.Tangular = Tangular;
+}
 
 if (typeof(exports) !== 'undefined')
 	module.exports = Tangular;
