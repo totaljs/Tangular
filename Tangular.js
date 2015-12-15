@@ -195,6 +195,9 @@ Tangular.append = function(line, skipl, isEach, model) {
 	if (skipl === undefined)
 		skipl = [];
 
+	if (!line)
+		return 'Tangular.$wrap(' + (model || '$s') + ')';
+
 	return line.replace(/[\_\$a-zá-žÁ-ŽA-Z0-9\s\.]+/g, function(word, index, text) {
 
 		var c = text.substring(index - 1, index);

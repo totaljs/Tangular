@@ -120,6 +120,13 @@ Tangular.helpers.currency(100, 2);
 <div>{{ name | raw }} = VALUE IS NOT ENCODED</div>
 ```
 
+## Miracles
+
+```javascript
+var template = Tangular.compile('Encoded value {{}} and raw value {{ | raw }}.');
+console.log(template('<b>Tangular</b>'));
+```
+
 ## Custom settings
 
 ```javascript
