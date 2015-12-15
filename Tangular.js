@@ -245,6 +245,9 @@ Tangular.append = function(line, skipl, isEach, model) {
 			break;
 		}
 
+		if (updated === '$')
+			return 'Tangular.$wrap($)';
+
 		if (updated.substring(0, 2) === '$.') {
 			model = '$';
 			updated = updated.substring(2);
@@ -266,6 +269,9 @@ Tangular.append = function(line, skipl, isEach, model) {
 Tangular.$wrap = function(model, path, def) {
 
 	if (!model)
+		return model;
+
+	if (!path)
 		return model;
 
 	var arr = Tangular.cache[path];
