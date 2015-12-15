@@ -2,11 +2,12 @@
 # Tangular
 > A simple template engine like Angular.js for JavaScript or node.js
 
-- only __3.0 kB__
+- only __2.0 kB__ minified + gziped
 - syntax like __Angular.js__ templates
 - supports custom helpers
 - supports conditions (+ nested conditions)
 - supports loops (+ nested loops)
+- __supports two models__
 - no dependencies
 - IE `>= 9`
 - best of use with [www.totaljs.com - web application framework for node.js](http://www.totaljs.com)
@@ -37,6 +38,17 @@ var output = Tangular.render('Hello {{name}} and {{name | raw}}!', { name: '<b>w
 // Hello &lt;b&gt;world&lt;/b&gt; and <b>world</b>!
 ```
 
+## Second model
+
+- very helpful, you don't have to change the base model
+- second model can be used in the template via `$` character, e.g. `{{ $.property_name }}`
+
+```javascript
+var output = Tangular.render('Hello {{ name }} and {{ $.name }}!', { name: 'MODEL 1' }, { name: 'MODEL 2'});
+// Hello MODEL 1 and MODEL 2
+```
+
+
 ## Best performance with pre-compile
 
 ```javascript
@@ -44,6 +56,7 @@ var output = Tangular.render('Hello {{name}} and {{name | raw}}!', { name: '<b>w
 var template = Tangular.compile('Hello {{name}} and {{name | raw}}!');
 
 // render
+// template(model, [model2])
 var output = template({ name: 'Peter' });
 ```
 
