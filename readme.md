@@ -137,6 +137,13 @@ Tangular.settings.delimiters = ['{{', '}}'];
 Tangular.settings.delimiters = ['(', ')'];
 ```
 
+## Alias: Tangular is too long as word
+
+```javascript
+// use alias:
+// Ta === Tangular
+Ta.compile('');
+```
 
 ## Contributors
 

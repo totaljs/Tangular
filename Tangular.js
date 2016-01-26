@@ -1,6 +1,6 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.5.0';
+Tangular.version = 'v1.5.1';
 Tangular.cache = {};
 Tangular.debug = false;
 Tangular.settings = {
@@ -321,10 +321,11 @@ Tangular.register('raw', function(value) {
 });
 
 if (typeof(global) !== 'undefined')
-	global.Tangular = Tangular;
+	global.Tangular = global.Ta = Tangular;
 else if (typeof(window) !== 'undefined') {
 	if (!window.Tangular)
 		window.Tangular = Tangular;
+	window.Ta = Tangular;
 }
 
 if (typeof(exports) !== 'undefined')
