@@ -1,2 +1,2 @@
 ECHO "[COMPILING]"
-uglifyjs Tangular.js -c -o Tangular.min.js
+uglifyjs Tangular.js -m -c -o Tangular.min.js
