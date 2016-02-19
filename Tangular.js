@@ -1,6 +1,6 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.5.1';
+Tangular.version = 'v1.5.2';
 Tangular.cache = {};
 Tangular.debug = false;
 Tangular.settings = {
@@ -311,7 +311,15 @@ Tangular.render = function(template, model, repository) {
 Tangular.register('encode', function(value) {
 	if (value === undefined || value === null)
 		value = '';
-	return value.toString().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	return value.toString().replace(/[<>&"]/g, function(c) {
+		switch (c) {
+			case '&': return '&amp;'
+			case '<': return '&lt;'
+			case '>': return '&gt;'
+			case '"': return '&quot;'
+		}
+		return c;
+	});
 });
 
 Tangular.register('raw', function(value) {
