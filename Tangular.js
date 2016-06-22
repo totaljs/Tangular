@@ -1,7 +1,8 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.5.2';
+Tangular.version = 'v1.5.3';
 Tangular.cache = {};
+Tangular.ENCODE = /[<>&"]/g;
 Tangular.debug = false;
 Tangular.settings = {
 	delimiters: ['{{', '}}'],
@@ -114,7 +115,7 @@ Tangular.compile = function(str) {
 			skip.pop();
 			add = true;
 			eachCount--;
-			if (eachCount === 0)
+			if (!eachCount)
 				isEach = false;
 		}
 
@@ -223,7 +224,7 @@ Tangular.append = function(line, skipl, isEach, model) {
 				break;
 		}
 
-		if (updated === '')
+		if (!updated)
 			return '';
 
 		if (skip)
@@ -301,7 +302,7 @@ Tangular.$wrap = function(model, path, def) {
 };
 
 Tangular.render = function(template, model, repository) {
-	if (model === undefined || model === null)
+	if (model == null)
 		model = {};
 	if (typeof(template) === 'string')
 		template = Tangular.compile(template);
@@ -309,9 +310,9 @@ Tangular.render = function(template, model, repository) {
 };
 
 Tangular.register('encode', function(value) {
-	if (value === undefined || value === null)
-		value = '';
-	return value.toString().replace(/[<>&"]/g, function(c) {
+	if (value == null)
+		return '';
+	return value.toString().replace(Tangular.ENCODE, function(c) {
 		switch (c) {
 			case '&': return '&amp;'
 			case '<': return '&lt;'
@@ -323,8 +324,8 @@ Tangular.register('encode', function(value) {
 });
 
 Tangular.register('raw', function(value) {
-	if (value === undefined || value === null)
-		value = '';
+	if (value == null)
+		return '';
 	return value;
 });
 
