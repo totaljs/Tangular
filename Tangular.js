@@ -1,6 +1,6 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.5.3';
+Tangular.version = 'v1.6.0';
 Tangular.cache = {};
 Tangular.ENCODE = /[<>&"]/g;
 Tangular.debug = false;
@@ -102,7 +102,7 @@ Tangular.compile = function(str) {
 			cmd = '}';
 			add = true;
 		} else if (cmd5 === 'else') {
-			cmd = '} else {';
+			cmd = '}else{';
 			add = true;
 		} else if (cmd.substring(0, 7) === 'else if') {
 			cmd = '}else if( ' + cmd.substring(8) + '){';
@@ -138,7 +138,7 @@ Tangular.compile = function(str) {
 
 	if (Tangular.debug) {
 		console.log('Tangular:');
-		console.log('function(helpers,$) {' + output + (is ? '' : ';') + 'return $output;');
+		console.log('function(helpers,$){' + output + (is ? '' : ';') + 'return $output;');
 		console.log(str.trim());
 		console.log('---------------------------');
 		console.log('');
@@ -199,7 +199,7 @@ Tangular.append = function(line, skipl, isEach, model) {
 	if (!line)
 		return 'Tangular.$wrap(' + (model || '$s') + ')';
 
-	return line.replace(/[\_\$a-zá-žÁ-ŽA-Z0-9\s\.]+/g, function(word, index, text) {
+	return line.replace(/[\_\$a-zá-žÁ-ŽA-Z0-9\s\.\[\]]+/g, function(word, index, text) {
 
 		var c = text.substring(index - 1, index);
 		var skip = false;
@@ -272,33 +272,26 @@ Tangular.append = function(line, skipl, isEach, model) {
 
 Tangular.$wrap = function(model, path, def) {
 
-	if (!model)
+	if (!model || !path)
 		return model;
 
-	if (!path)
-		return model;
-
-	var arr = Tangular.cache[path];
-	if (arr === null)
+	var fn = Tangular.cache[path];
+	if (fn === null)
 		return model[path];
 
-	if (!arr) {
-		arr = path.split('.');
-		Tangular.cache[path] = arr.length === 1 ? null : arr;
-	}
+	if (fn)
+		return fn(model);
 
-	if (arr.length === 1)
+	if (path.split('.').length === 1) {
+		Tangular.cache[path] = null;
 		return model[path];
-
-	var tmp = model;
-	for (var i = 0, length = arr.length; i < length; i++) {
-		var p = arr[i];
-		tmp = tmp[p];
-		if (!tmp)
-			return i + 1 === length ? tmp : def;
 	}
 
-	return tmp;
+	try {
+		fn = Tangular.cache[path] = new Function('XYZ', 'try{return XYZ.' + path + '}catch(e){return ""}');
+	} catch(e) { fn = new Function('return ""'); }
+
+	return fn(model);
 };
 
 Tangular.render = function(template, model, repository) {
