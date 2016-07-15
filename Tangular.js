@@ -26,6 +26,9 @@ Tangular.compile = function(str) {
 	var count = 0;
 	var len = Tangular.settings.delimiters[0].length;
 	var text;
+	var txt = [];
+	var txtindex = -1;
+
 	while (length > index++) {
 
 		var c = str.substring(index, index + len);
@@ -52,14 +55,29 @@ Tangular.compile = function(str) {
 			}
 
 			text = str.substring(end, index);
-			builder.push(text ? 'unescape("' + escape(text) + '")' : '""');
+			if (text) {
+				txtindex = txt.indexOf(text);
+				if (txtindex === -1) {
+					txtindex = txt.length;
+					txt.push(text);
+				}
+			}
+			builder.push(text ? 'txt[' + (txtindex) + ']' : '""');
 			beg = index + len;
 			continue;
 		}
 	}
 
 	text = str.substring(end, length);
-	builder.push(text ? 'unescape("' + escape(text) + '")' : '""');
+	if (text) {
+		txtindex = txt.indexOf(text);
+		if (txtindex === -1) {
+			txtindex = txt.length;
+			txt.push(text);
+		}
+	}
+
+	builder.push(text ? 'txt[' + txtindex + ']' : '""');
 	length = builder.length;
 
 	var plus = '$output+=';
@@ -145,13 +163,13 @@ Tangular.compile = function(str) {
 	}
 
 	return function(model, $) {
-		return new Function('helpers', '$', output + (is ? '' : ';') + 'return $output;').call(model, function(name) {
+		return new Function('helpers', '$', 'txt', output + (is ? '' : ';') + 'return $output;').call(model, function(name) {
 			var fn = Tangular.helpers[name];
 			if (fn)
 				return fn;
 			console.warn('Tangular helper "' + name + '" not found.');
 			return function(value) { return value === undefined ? 'undefined' : value === null ? 'null' : value.toString(); };
-		}, $);
+		}, $, txt);
 	};
 }
 
