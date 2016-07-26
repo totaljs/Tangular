@@ -1,5 +1,9 @@
 [![MIT License][license-image]][license-url]
+
+[![Support](https://www.totaljs.com/img/button-support.png)](https://www.totaljs.com/support/)
+
 # Tangular
+
 > A simple template engine like Angular.js for JavaScript or node.js
 
 - only __2.0 kB__ minified + gziped
@@ -10,7 +14,7 @@
 - __supports two models__
 - no dependencies
 - IE `>= 9`
-- best of use with [www.totaljs.com - web application framework for node.js](http://www.totaljs.com)
+- best of use with [www.totaljs.com - web framework for Node.js](http://www.totaljs.com)
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
 - [__DEMO EXAMPLE__](http://example.jcomponent.org)
 
