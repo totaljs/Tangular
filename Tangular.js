@@ -1,6 +1,6 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.6.0';
+Tangular.version = 'v1.7.0';
 Tangular.cache = {};
 Tangular.ENCODE = /[<>&"]/g;
 Tangular.debug = false;
@@ -163,14 +163,16 @@ Tangular.compile = function(str) {
 	}
 
 	return function(model, $) {
-		return new Function('helpers', '$', 'txt', output + (is ? '' : ';') + 'return $output;').call(model, function(name) {
-			var fn = Tangular.helpers[name];
-			if (fn)
-				return fn;
-			console.warn('Tangular helper "' + name + '" not found.');
-			return function(value) { return value === undefined ? 'undefined' : value === null ? 'null' : value.toString(); };
-		}, $, txt);
+		return new Function('helpers', '$', 'txt', output + (is ? '' : ';') + 'return $output;').call(model, Tangular.helperhandling, $, txt);
 	};
+};
+
+Tangular.helperhandling = function(name) {
+	var fn = Tangular.helpers[name];
+	if (fn)
+		return fn;
+	console.warn('Tangular helper "' + name + '" not found.');
+	return function(value) { return value === undefined ? 'undefined' : value === null ? 'null' : value.toString(); };
 }
 
 Tangular.helper = function(line, skip, isEach) {
@@ -321,9 +323,7 @@ Tangular.render = function(template, model, repository) {
 };
 
 Tangular.register('encode', function(value) {
-	if (value == null)
-		return '';
-	return value.toString().replace(Tangular.ENCODE, function(c) {
+	return value == null ? '' : value.toString().replace(Tangular.ENCODE, function(c) {
 		switch (c) {
 			case '&': return '&amp;'
 			case '<': return '&lt;'
@@ -335,9 +335,7 @@ Tangular.register('encode', function(value) {
 });
 
 Tangular.register('raw', function(value) {
-	if (value == null)
-		return '';
-	return value;
+	return value == null ? '' : value;
 });
 
 if (typeof(global) !== 'undefined')
