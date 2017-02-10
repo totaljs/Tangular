@@ -1,6 +1,9 @@
 [![MIT License][license-image]][license-url]
 
-[![Support](https://www.totaljs.com/img/button-support.png)](https://www.totaljs.com/support/) [![Donate](https://www.totaljs.com/img/button-donate.png)](https://www.totaljs.com/#make-a-donation)
+[![Support](https://www.totaljs.com/img/button-support.png)](https://www.totaljs.com/support/)
+
+- [__Live chat with professional support__](https://messenger.totaljs.com)
+- [__HelpDesk with professional support__](https://helpdesk.totaljs.com)
 
 # Tangular
 
