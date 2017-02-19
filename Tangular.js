@@ -1,6 +1,6 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.7.0';
+Tangular.version = 'v1.8.0';
 Tangular.cache = {};
 Tangular.ENCODE = /[<>&"]/g;
 Tangular.debug = false;
@@ -38,7 +38,16 @@ Tangular.compile = function(str) {
 					count--;
 					continue;
 				}
-				builder.push(str.substring(beg, index).trim());
+
+				var cmd = str.substring(beg, index).trim();
+				var tmp = cmd.substring(0, 3);
+
+				if (tmp === 'if ' || tmp === 'for' || cmd === 'end' || cmd === 'fi' || cmd === 'else' || cmd === 'else if') {
+					var l = txt.length - 1;
+					txt[l] = txt[l].replace(/\n$/g, '');
+				}
+
+				builder.push(cmd);
 				end = index + len;
 				beg = -1;
 				continue;
