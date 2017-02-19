@@ -1,8 +1,9 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.8.0';
+Tangular.version = 'v1.8.2';
 Tangular.cache = {};
 Tangular.ENCODE = /[<>&"]/g;
+Tangular.TRIM = /\n$/g;
 Tangular.debug = false;
 Tangular.settings = {
 	delimiters: ['{{', '}}'],
@@ -44,7 +45,8 @@ Tangular.compile = function(str) {
 
 				if (tmp === 'if ' || tmp === 'for' || cmd === 'end' || cmd === 'fi' || cmd === 'else' || cmd === 'else if') {
 					var l = txt.length - 1;
-					txt[l] = txt[l].replace(/\n$/g, '');
+					if (txt[l])
+						txt[l] = txt[l].replace(Tangular.TRIM, '');
 				}
 
 				builder.push(cmd);
