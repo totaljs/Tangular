@@ -1,6 +1,6 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.8.2';
+Tangular.version = 'v1.8.3';
 Tangular.cache = {};
 Tangular.ENCODE = /[<>&"]/g;
 Tangular.TRIM = /\n$/g;
