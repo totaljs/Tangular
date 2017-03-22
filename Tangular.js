@@ -123,7 +123,7 @@ Tangular.compile = function(str) {
 			add = true;
 			isEach = true;
 			eachCount++;
-	   }
+		}
 
 		var cmd5 = cmd.substring(0, 5);
 
@@ -184,7 +184,7 @@ Tangular.helperhandling = function(name) {
 		return fn;
 	console.warn('Tangular helper "' + name + '" not found.');
 	return function(value) { return value === undefined ? 'undefined' : value === null ? 'null' : value.toString(); };
-}
+};
 
 Tangular.helper = function(line, skip, isEach) {
 
@@ -301,7 +301,7 @@ Tangular.append = function(line, skipl, isEach, model) {
 	});
 };
 
-Tangular.$wrap = function(model, path, def) {
+Tangular.$wrap = function(model, path) {
 
 	if (!model || !path)
 		return model;
@@ -336,10 +336,10 @@ Tangular.render = function(template, model, repository) {
 Tangular.register('encode', function(value) {
 	return value == null ? '' : value.toString().replace(Tangular.ENCODE, function(c) {
 		switch (c) {
-			case '&': return '&amp;'
-			case '<': return '&lt;'
-			case '>': return '&gt;'
-			case '"': return '&quot;'
+			case '&': return '&amp;';
+			case '<': return '&lt;';
+			case '>': return '&gt;';
+			case '"': return '&quot;';
 		}
 		return c;
 	});
