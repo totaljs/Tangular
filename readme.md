@@ -38,7 +38,7 @@ npm install tangular
 var Tangular = require('tangular');
 ```
 
-## Example
+## Example
 
 ```javascript
 var output = Tangular.render('Hello {{name}} and {{name | raw}}!', { name: '<b>world</b>' });
@@ -67,7 +67,7 @@ var template = Tangular.compile('Hello {{name}} and {{name | raw}}!');
 var output = template({ name: 'Peter' });
 ```
 
-## Conditions
+## Conditions
 
 - supports `else if`
 
@@ -152,7 +152,7 @@ Tangular.settings.delimiters = ['(', ')'];
 Ta.compile('');
 ```
 
-## Contributors
+## Contributors
 
 | Contributor | Type | E-mail |
 |-------------|------|--------|
