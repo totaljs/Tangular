@@ -1,6 +1,6 @@
 var Tangular = {};
 Tangular.helpers = {};
-Tangular.version = 'v1.8.3';
+Tangular.version = 'v1.9.0';
 Tangular.cache = {};
 Tangular.ENCODE = /[<>&"]/g;
 Tangular.TRIM = /\n$/g;
@@ -8,6 +8,10 @@ Tangular.debug = false;
 Tangular.settings = {
 	delimiters: ['{{', '}}'],
 };
+Tangular.i = {};
+Tangular.i.white = /\W/;
+Tangular.i.numbers = { '0':1, '1': 1, '2': 1, '3': 1, '4': 1, '5': 1, '6': 1, '7': 1, '8': 1, '9': 1 };
+Tangular.i.allow = { '$': 1, '.': 1 };
 
 Tangular.register = function(name, fn) {
 	Tangular.helpers[name] = fn;
@@ -222,6 +226,65 @@ Tangular.helper = function(line, skip, isEach) {
 	return '"";$t=' + property + ';' + output + '$output+=$t';
 };
 
+Tangular.parse = function(line, fn) {
+
+	var builder = [];
+	var skip = null;
+	var command = [];
+
+	for (var i = 0, length = line.length; i < length; i++) {
+		var c = line.substring(i, i + 1);
+
+		if (c === skip) {
+			skip = null;
+			builder = [];
+			command.push(c);
+			continue;
+		}
+
+		if (skip) {
+			command.push(c);
+			continue;
+		}
+
+		if (c === '\'' || c === '\"') {
+
+			if (builder.length) {
+				command.push(fn(builder.join('')));
+				builder = [];
+			}
+
+			skip = c;
+			command.push(c);
+			continue;
+		}
+
+		if (Tangular.i.numbers[c] && !builder.length) {
+			command.push(c);
+			continue;
+		}
+
+		if (!Tangular.i.allow[c] && Tangular.i.white.test(c)) {
+
+			if (builder.length) {
+				command.push(fn(builder.join('')));
+				builder = [];
+			}
+
+			command.push(c);
+			continue;
+		}
+
+		if (c !== ' ')
+			builder.push(c);
+		else
+			command.push(c);
+	}
+
+	builder.length && command.push(fn(builder.join('')));
+	return command.join('');
+};
+
 Tangular.append = function(line, skipl, isEach, model) {
 
 	if (skipl === undefined)
@@ -230,16 +293,9 @@ Tangular.append = function(line, skipl, isEach, model) {
 	if (!line)
 		return 'Tangular.$wrap(' + (model || '$s') + ')';
 
-	return line.replace(/[\_\$a-zá-žÁ-ŽA-Z0-9\s\.\[\]]+/g, function(word, index, text) {
+	return Tangular.parse(line, function(updated) {
 
-		var c = text.substring(index - 1, index);
-		var skip = false;
-		var updated = word.trim();
-
-		if (c === '"' || c === '\'' || c === '.')
-			skip = true;
-
-		switch (word.trim()) {
+		switch (updated.trim()) {
 			case 'else':
 			case 'end':
 			case 'endfor':
@@ -247,21 +303,15 @@ Tangular.append = function(line, skipl, isEach, model) {
 			case 'fi':
 			case 'foreach':
 			case 'if':
+			case 'true':
+			case 'false':
 			case 'else if':
-				return word;
+				return updated;
 			case '$index':
-				if (!skip)
-					return word;
-				break;
+				return updated;
 		}
 
-		if (!updated)
-			return '';
-
-		if (skip)
-			return word;
-
-		skip = false;
+		var skip = false;
 
 		for (var j = 0, length = skipl.length; j < length; j++) {
 
