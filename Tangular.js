@@ -19,6 +19,7 @@
 	Tangular.i.allow = { '$': 1, '.': 1 };
 
 	W.Ta = W.Tangular = Tangular;
+	W.Thelpers = Tangular.helpers;
 
 	Tangular.register = function(name, fn) {
 		Tangular.helpers[name] = fn;
@@ -120,6 +121,7 @@
 			var index = cmd.lastIndexOf('|');
 			var arr = null;
 			var cmd3 = cmd.substring(0, 3);
+			var cmd4 = cmd.substring(0, 4);
 
 			if (cmd3 === 'if ') {
 				cmd = 'if( ' + cmd.substring(3) + '){';
@@ -137,8 +139,9 @@
 			}
 
 			var cmd5 = cmd.substring(0, 5);
+			var cmd6 = cmd.substring(0, 6);
 
-			if (cmd5 === 'endif' || cmd === 'fi') {
+			if (cmd6 === 'endif' || cmd === 'fi') {
 				cmd = '}';
 				add = true;
 			} else if (cmd5 === 'else') {
@@ -147,7 +150,7 @@
 			} else if (cmd.substring(0, 7) === 'else if') {
 				cmd = '}else if( ' + cmd.substring(8) + '){';
 				add = true;
-			} else if (cmd3 === 'end' || cmd.substring(0, 6) === 'endfor') {
+			} else if (cmd4 === 'end' || cmd6 === 'endfor') {
 				if (skip.length)
 					cmd = '}})()}';
 				else
@@ -254,7 +257,7 @@
 				continue;
 			}
 
-			if (c === '\'' || c === '\"') {
+			if (c === '\'' || c === '"') {
 
 				if (builder.length) {
 					command.push(fn(builder.join('')));
