@@ -6,6 +6,8 @@ var str = `Hello {{name}}!
     <div>NO</div>
 {{fi}}
 
+{{ $.page }}
+
 {{if name !== null}}
     <div>{{ name | uppercase | lowercase }}</div>
 {{fi}}
@@ -17,33 +19,49 @@ var str = `Hello {{name}}!
     {{ end }}
 {{end}}`;
 
-var loops = [];
+var variables = {};
 var loopcount = 0;
 var ifcount = 0;
+var emptybeg = '\'+';
+var emptyend = '+\'';
 
-str.match(/\{\{.*?\}\}/g).forEach(function(item) {
-	var cmd = item.replace(/\{\{|\}\}/g, '').trim();
+var output = str.replace(/\{\{.*?\}\}/g, function(text) {
+
+	var cmd = text.replace(/\{\{|\}\}/g, '').trim();
 
 	if (cmd === 'fi') {
 		ifcount--;
 		// end of condition
-		return;
+		return '';
 	} else if (cmd === 'end') {
 		loopcount--;
 		// end of loop
-		return;
+		return '';
+	} else if (cmd === 'else') {
+		// else
+		return '';
 	} else if (cmd.substring(0, 3) === 'if ') {
 		ifcount++;
 		// condition
-		return;
+		return '';
 	} else if (cmd.substring(0, 8) === 'foreach ') {
 		loopcount++;
 		// loop
-		return;
+		return '';
 	} else if (cmd.substring(0, 8) === 'else if ' || cmd.substring(0, 7) === 'elseif ') {
 		// else if
-		return;
+		return '';
 	}
 
-	console.log(cmd, ifcount, loopcount);
+	var variable = cmd.match(/^[a-z0-9$]+/i).toString();
+
+	if (variables[variable])
+		variables[variable]++;
+	else
+		variables[variable] = 1;
+
+	var helpers = cmd.split('|');
+
+	return emptybeg + '$read(' + helpers[0].trim() + ')' + emptyend;
+	// console.log(cmd, ifcount, loopcount);
 });
