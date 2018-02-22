@@ -153,7 +153,7 @@
 						var helper = helpers[i].trim();
 						index = helper.indexOf('(');
 						if (index === -1) {
-							helper = 'Thelpers.$execute(model,\'' + helper + '\', \7)';
+							helper = 'Thelpers.$execute(model,\'' + helper + '\',\7)';
 						} else
 							helper = 'Thelpers.$execute(model,\'' + helper.substring(0, index) + '\',\7,' + helper.substring(index + 1);
 						helpers[i] = helper;
@@ -226,7 +226,7 @@
 
 					var name = '$i' + Math.random().toString(16).substring(3, 6);
 					var namea = name + 'a';
-					tmp = cmd.variable[0];
+					tmp = cmd.cmd.substring(cmd.cmd.lastIndexOf(' in ') + 4).trim();
 					tmp = namea + '=' + self.safe(tmp) + ';if(!(' + namea + ' instanceof Array)){if(' + namea + '&&typeof(' + namea + ')===\'object\')' + namea + '=Tangular.toArray(' + namea + ')}if(' + namea + ' instanceof Array&&' + namea + '.length){for(var ' + name + '=0,' + name + 'l=' + namea + '.length;' + name + '<' + name + 'l;' + name + '++){$index=' + name + ';var ' + cmd.cmd.split(' ')[1] + '=' + namea + '[' + name + '];';
 					builder.push(tmp);
 
@@ -285,6 +285,7 @@
 	};
 
 	Thelpers.$execute = function(model, name, a, b, c, d, e, f, g, h) {
+
 		if (Thelpers[name] == null) {
 			console && console.warn('Tangular: missing helper', '"' + name + '"');
 			return a;
