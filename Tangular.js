@@ -122,7 +122,11 @@
 				isif = true;
 			} else if (cmd !== 'continue' && cmd !== 'break' && cmd !== 'else') {
 
-				variable = cmd ? cmd.match(REG_KEYCLEAN).toString() : '';
+
+				variable = cmd ? cmd.match(REG_KEYCLEAN) : null;
+
+				if (variable)
+					variable = variable.toString();
 
 				if (variable && loops.indexOf(variable) === -1) {
 					if (self.variables[variable])
@@ -130,29 +134,30 @@
 					else
 						self.variables[variable] = 1;
 
-					if (cmd.indexOf('|') === -1)
-						cmd += ' | encode';
-
-					helpers = cmd.split('|');
-					cmd = helpers[0];
-					helpers = helpers.slice(1);
-					if (helpers.length) {
-						for (var i = 0; i < helpers.length; i++) {
-							var helper = helpers[i].trim();
-							index = helper.indexOf('(');
-							if (index === -1) {
-								helper = 'Thelpers.$execute(\'' + helper + '\', \7)';
-							} else
-								helper = 'Thelpers.$execute(\'' + helper.substring(0, index) + '\',\7,' + helper.substring(index + 1);
-							helpers[i] = helper;
-						}
-					} else
-						helpers = null;
 					variable = [variable];
 				} else
 					variable = null;
 
-				cmd = self.safe(cmd || 'model');
+				if (cmd.indexOf('|') === -1)
+					cmd += ' | encode';
+
+				helpers = cmd.split('|');
+				cmd = helpers[0];
+				helpers = helpers.slice(1);
+				if (helpers.length) {
+					for (var i = 0; i < helpers.length; i++) {
+						var helper = helpers[i].trim();
+						index = helper.indexOf('(');
+						if (index === -1) {
+							helper = 'Thelpers.$execute(\'' + helper + '\', \7)';
+						} else
+							helper = 'Thelpers.$execute(\'' + helper.substring(0, index) + '\',\7,' + helper.substring(index + 1);
+						helpers[i] = helper;
+					}
+				} else
+					helpers = null;
+
+				cmd = self.safe(cmd.trim() || 'model');
 				iscode = false;
 			}
 

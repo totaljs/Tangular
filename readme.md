@@ -134,16 +134,6 @@ var template = Tangular.compile('Encoded value {{}} and raw value {{ | raw }}.')
 console.log(template('<b>Tangular</b>'));
 ```
 
-## Custom settings
-
-```javascript
-// Default
-Tangular.settings.delimiters = ['{{', '}}'];
-
-// You can change it to e.g.:
-Tangular.settings.delimiters = ['(', ')'];
-```
-
 ## Alias: Tangular is too long as word
 
 ```javascript
