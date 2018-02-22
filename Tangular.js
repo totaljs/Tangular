@@ -12,6 +12,7 @@
 	W.Ta = W.Tangular = Tangular;
 	W.Thelpers = Thelpers;
 
+	var SKIP = { 'null': true, 'undefined': true, 'true': true, 'false': true };
 	var REG_VARIABLES = /&&|\|\|/;
 	var REG_KEY = /[a-z0-9._]+/gi;
 	var REG_KEYCLEAN = /^[a-z0-9$]+/i;
@@ -128,6 +129,9 @@
 				if (variable)
 					variable = variable.toString();
 
+				if (variable && SKIP[variable])
+					variable = null;
+
 				if (variable && loops.indexOf(variable) === -1) {
 					if (self.variables[variable])
 						self.variables[variable]++;
@@ -184,7 +188,7 @@
 			for (var j = 0; j < keys.length; j++) {
 				key = keys[j];
 				key = key.split('.')[0];
-				if (!key || (REG_NUM).test(key) || key === 'null' || key === 'undefined')
+				if (!key || (REG_NUM).test(key) || SKIP[key])
 					continue;
 				variables.indexOf(key) === -1 && skip.indexOf(key) === -1 && variables.push(key);
 			}
@@ -228,7 +232,7 @@
 
 				} else if (cmd.isif) {
 					if (cmd.cmd.substring(0, 8) === 'else if ')
-						builder.push(cmd.cmd.substring(0, 8).trim() + '(' + cmd.cmd.substring(8).trim() + '){');
+						builder.push('}' + cmd.cmd.substring(0, 8).trim() + '(' + cmd.cmd.substring(8).trim() + '){');
 					else
 						builder.push(cmd.cmd.substring(0, 3).trim() + '(' + cmd.cmd.substring(3).trim() + '){');
 				} else {
@@ -312,6 +316,11 @@
 
 	Tangular.compile = function(template) {
 		return new Template().compile(template);
+	};
+
+	Tangular.register = function(name, fn) {
+		Thelpers[name] = fn;
+		return Tangular;
 	};
 
 })(typeof(window) === 'undefined' ? global : window);
