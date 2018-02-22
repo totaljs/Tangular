@@ -15,7 +15,7 @@
 	var SKIP = { 'null': true, 'undefined': true, 'true': true, 'false': true };
 	var REG_VARIABLES = /&&|\|\|/;
 	var REG_KEY = /[a-z0-9._]+/gi;
-	var REG_KEYCLEAN = /^[a-z0-9$]+/i;
+	var REG_KEYCLEAN = /^[a-z0-9_$]+/i;
 	var REG_NUM = /^[0-9]/;
 	var REG_STRING = /'.*?'|".?"/g;
 	var REG_CMDFIND = /\{\{.*?\}\}/g;
@@ -153,9 +153,9 @@
 						var helper = helpers[i].trim();
 						index = helper.indexOf('(');
 						if (index === -1) {
-							helper = 'Thelpers.$execute(\'' + helper + '\', \7)';
+							helper = 'Thelpers.$execute(model,\'' + helper + '\', \7)';
 						} else
-							helper = 'Thelpers.$execute(\'' + helper.substring(0, index) + '\',\7,' + helper.substring(index + 1);
+							helper = 'Thelpers.$execute(model,\'' + helper.substring(0, index) + '\',\7,' + helper.substring(index + 1);
 						helpers[i] = helper;
 					}
 				} else
@@ -284,12 +284,12 @@
 		return (new Function('$text', code))(self.builder);
 	};
 
-	Thelpers.$execute = function(name, a, b, c, d, e, f, g, h) {
+	Thelpers.$execute = function(model, name, a, b, c, d, e, f, g, h) {
 		if (Thelpers[name] == null) {
 			console && console.warn('Tangular: missing helper', '"' + name + '"');
 			return a;
 		}
-		return Thelpers[name].call(this, a, b, c, d, e, f, g, h);
+		return Thelpers[name].call(model, a, b, c, d, e, f, g, h);
 	};
 
 	Thelpers.encode = function(value) {
