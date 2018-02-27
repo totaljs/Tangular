@@ -19,6 +19,7 @@
 - IE `>= 9`
 - best of use with [www.totaljs.com - web framework for Node.js](http://www.totaljs.com)
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
+- __One of the fastest template engine in the world__
 
 __YOU MUST SEE:__
 
