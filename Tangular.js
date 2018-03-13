@@ -5,7 +5,7 @@
 
 	var Tangular = {};
 	var Thelpers = Tangular.helpers = {};
-	Tangular.version = 'v3.0.0';
+	Tangular.version = 'v3.0.1';
 	Tangular.cache = {};
 	Tangular.debug = false;
 
@@ -170,6 +170,7 @@
 
 		}).split(self.split);
 
+
 		for (var i = 0, length = self.builder.length; i < length; i++)
 			self.builder[i] = self.builder[i].replace(REG_TRIM, '');
 
@@ -271,7 +272,7 @@
 			}
 		}
 
-		builder.push('$output+=$text[' + self.commands.length + '];return $output;');
+		builder.push((length ? ('$output+=$text[' + length + '];') : '') + 'return $output;');
 
 		delete self.variables.$;
 		var variables = Object.keys(self.variables);
