@@ -272,7 +272,7 @@
 			}
 		}
 
-		builder.push((length ? ('$output+=$text[' + length + '];') : '') + 'return $output;');
+		builder.push((length ? ('$output+=$text[' + length + '];') : '') + 'return $output;');
 
 		delete self.variables.$;
 		var variables = Object.keys(self.variables);
@@ -325,7 +325,4 @@
 		return Tangular;
 	};
 
-})(typeof(window) === 'undefined' ? global : window);
-
-if (typeof(exports) !== 'undefined')
-	module.exports = Tangular;
+})(window);
