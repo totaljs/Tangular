@@ -120,6 +120,16 @@ Tangular.helpers.currency(100, 2);
 <div>{{ count | plus | plus(2) | plus | plus(3) }}</div>
 ```
 
+## Asynchronous helpers
+
+```javascript
+Tangular.register('formatAsync', async () => {
+    // asynchronous code
+});
+
+var output = Tangular.renderAsync('Hello {{ name | formatAsync }}', { name: 'Peter' });
+```
+
 ## Built-in helpers
 
 ```html
@@ -148,6 +158,7 @@ Ta.compile('');
 |-------------|------|--------|
 | [Peter Širka](https://www.petersirka.eu) | author  | <petersirka@gmail.com> |
 | [Константин](https://github.com/bashkos) | contributor |
+| [Dobobaie](https://github.com/dobobaie) | contributor | <dobobaie@hotmail.fr> |
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: license.txt

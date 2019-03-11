@@ -1,6 +1,6 @@
 {
   "name": "tangular",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A simple template engine like Angular.js for JavaScript or node.js",
   "main": "./Tangular.js",
   "keywords": [
@@ -32,5 +32,8 @@
   }, {
       "name": "Константин",
       "email": ""
+  }, {
+      "name": "Dobobaie",
+      "email": "dobobaie@hotmail.fr"
   }]
 }

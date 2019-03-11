@@ -1,5 +1,7 @@
-(function(W) {
+let M = global;
+try { M = window; } catch (e) {}
 
+(function(W) {
 	if (W.Tangular)
 		return;
 
@@ -38,7 +40,7 @@
 		this.split = '\0';
 	}
 
-	Template.prototype.compile = function(template) {
+	Template.prototype.compile = function(template, isAsync) {
 
 		var self = this;
 		var ifcount = 0;
@@ -174,7 +176,7 @@
 		for (var i = 0, length = self.builder.length; i < length; i++)
 			self.builder[i] = self.builder[i].replace(REG_TRIM, '');
 
-		return self.make();
+		return self.make(isAsync);
 	};
 
 	Template.prototype.parseVariables = function(condition, skip) {
@@ -209,7 +211,7 @@
 		return output.join('') + arr.join('.');
 	};
 
-	Template.prototype.make = function() {
+	Template.prototype.make = function(isAsync) {
 
 		var self = this;
 		var builder = ['var $output=$text[0];var $tmp;var $index=0;'];
@@ -266,7 +268,7 @@
 						else
 							str = helper.replace('\7', str.trim());
 					}
-					builder.push('$tmp=' + str + ';if($tmp!=null)$output+=$tmp;');
+					builder.push(`$tmp=${str};if($tmp!=null)$output+=${isAsync ? 'await ' : ''}$tmp;`);
 				} else
 					builder.push('if(' + cmd.cmd + '!=null)$output+=' + cmd.cmd + ';');
 			}
@@ -281,7 +283,8 @@
 		for (var i = 0; i < variables.length; i++)
 			names.push('model.' + variables[i]);
 
-		var code = 'var tangular=function($,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function(model,$){return tangular(' + names.join(',') + ');}';
+		var code = 'var tangular=' + (isAsync ? 'async ' : '') + 'function($,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function(model,$){return tangular(' + names.join(',') + ');}';
+		const Function = Object.getPrototypeOf(isAsync ? async ()=>{} : ()=>{}).constructor;
 		return (new Function('$text', code))(self.builder);
 	};
 
@@ -316,6 +319,12 @@
 		return new Template().compile(template)(model, repository);
 	};
 
+	Tangular.renderAsync = async function (template, model, repository) {
+		if (model == null)
+			model = {};
+		return (await new Template().compile(template, true))(model, repository);
+	};
+
 	Tangular.compile = function(template) {
 		return new Template().compile(template);
 	};
@@ -325,4 +334,6 @@
 		return Tangular;
 	};
 
-})(window);
+})(M);
+
+if (module && module.exports) module.exports = M.Tangular;
