@@ -4,6 +4,8 @@
 
 - [__Live chat with professional support__](https://messenger.totaljs.com)
 - [__HelpDesk with professional support__](https://helpdesk.totaljs.com)
+  
+⚠ It's a fork from [Tangular](https://www.npmjs.com/package/tangular) repository ⚠    
 
 # Tangular
 
@@ -16,7 +18,7 @@
 - supports loops (+ nested loops)
 - __supports two models__
 - no dependencies
-- IE `>= 9`
+- asynchronous register
 - best of use with [www.totaljs.com - web framework for Node.js](http://www.totaljs.com)
 - Live example on [JSFiddle / Tangular](http://jsfiddle.net/petersirka/ftfvba65/2/)
 - __One of the fastest template engine in the world__

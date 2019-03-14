@@ -1,6 +1,6 @@
 {
-  "name": "tangular",
-  "version": "3.0.2",
+  "name": "tangular-async",
+  "version": "1.0.0",
   "description": "A simple template engine like Angular.js for JavaScript or node.js",
   "main": "./Tangular.js",
   "keywords": [
@@ -8,7 +8,8 @@
     "Handlebars",
     "Mustache",
     "view engine",
-    "template"
+    "template",
+    "asynchronous"
   ],
   "engines": {
     "node": ">=0.8.0"
