@@ -33,11 +33,11 @@ __YOU MUST SEE:__
 ## Node.js
 
 ```bash
-npm install tangular
+npm install --save tangular-async
 ```
 
 ```javascript
-var Tangular = require('tangular');
+var Tangular = require('tangular-async');
 ```
 
 ## Example
@@ -125,11 +125,12 @@ Tangular.helpers.currency(100, 2);
 ## Asynchronous helpers
 
 ```javascript
-Tangular.register('formatAsync', async () => {
-    // asynchronous code
+Tangular.register('toBase64', async url => {
+    // asynchronous code to get url
+    return base64Stream;
 });
 
-var output = Tangular.renderAsync('Hello {{ name | formatAsync }}', { name: 'Peter' });
+var output = await Tangular.renderAsync('Hello <img src="{{ img | toBase64 }}">', { img: 'https://raw.githubusercontent.com/hall5714/tangular/master/docs/images/tangular.png' });
 ```
 
 ## Built-in helpers
