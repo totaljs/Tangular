@@ -5,7 +5,7 @@
 
 	var Tangular = {};
 	var Thelpers = Tangular.helpers = {};
-	Tangular.version = 'v4.0.0';
+	Tangular.version = 'v4.0.1';
 	Tangular.cache = {};
 	Tangular.debug = false;
 
@@ -82,6 +82,7 @@
 		var tmp;
 		var loops = [];
 
+		self.template = template;
 		self.variables = {};
 		self.commands = [];
 
@@ -290,8 +291,8 @@
 		for (var i = 0; i < variables.length; i++)
 			names.push('model.' + variables[i]);
 
-		var code = 'var tangular=function($,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function(model,$){return tangular(' + names.join(',') + ');}';
-		return (new Function('$text', code))(self.builder);
+		var code = 'var tangular=function($,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function(model,$){try{return tangular(' + names.join(',') + ')}catch(e){console.error(\'Tangular error:\',e + \'\',$template)}}';
+		return (new Function('$text', '$template', code))(self.builder, self.template);
 	};
 
 	Thelpers.$execute = function(model, name, a, b, c, d, e, f, g, h) {
@@ -333,4 +334,4 @@
 		return Tangular;
 	};
 
-})(window);
+})(typeof(window)==='undefined'?global:window);
