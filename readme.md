@@ -35,7 +35,9 @@ npm install tangular
 ```
 
 ```javascript
-var Tangular = require('tangular');
+require('tangular');
+// Inits Tangular and registers "Tangular" keyword as a global variable
+// console.log(Tangular);
 ```
 
 ## Example
