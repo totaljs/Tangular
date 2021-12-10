@@ -5,9 +5,8 @@
 
 	var Tangular = {};
 	var Thelpers = Tangular.helpers = {};
-	Tangular.version = 'v4.0.1';
+	Tangular.version = 'v5.0.0';
 	Tangular.cache = {};
-	Tangular.debug = false;
 
 	W.Ta = W.Tangular = Tangular;
 	W.Thelpers = Thelpers;
@@ -183,9 +182,9 @@
 						var helper = helpers[i].trim();
 						index = helper.indexOf('(');
 						if (index === -1) {
-							helper = 'Thelpers.$execute(model,\'' + helper + '\',\7)';
+							helper = 'Thelpers.$execute($helpers,model,\'' + helper + '\',\7)';
 						} else
-							helper = 'Thelpers.$execute(model,\'' + helper.substring(0, index) + '\',\7,' + helper.substring(index + 1);
+							helper = 'Thelpers.$execute($helpers,model,\'' + helper.substring(0, index) + '\',\7,' + helper.substring(index + 1);
 						helpers[i] = helper;
 					}
 				} else
@@ -286,23 +285,25 @@
 		builder.push((length ? ('$output+=$text[' + length + '];') : '') + 'return $output.charAt(0) === \'\\n\'?$output.substring(1):$output;');
 		delete self.variables.$;
 		var variables = Object.keys(self.variables);
-		var names = ['$ || {}', 'model'];
+		var names = ['$helpers||{}', '$||{}', 'model'];
 
 		for (var i = 0; i < variables.length; i++)
 			names.push('model.' + variables[i]);
 
-		var code = 'var tangular=function($,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function(model,$){try{return tangular(' + names.join(',') + ')}catch(e){console.error(\'Tangular error:\',e + \'\',$template)}}';
+		var code = 'var tangular=function($helpers,$,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function($helpers,model,$){try{return tangular(' + names.join(',') + ')}catch(e){console.error(\'Tangular error:\',e + \'\',$template)}}';
 		return (new Function('$text', '$template', code))(self.builder, self.template);
 	};
 
-	Thelpers.$execute = function(model, name, a, b, c, d, e, f, g, h) {
+	Thelpers.$execute = function(helpers, model, name, a, b, c, d, e, f, g, h) {
 
-		if (Thelpers[name] == null) {
+		var fn = Thelpers[name] || helpers[name];
+
+		if (!fn) {
 			console && console.warn('Tangular: missing helper', '"' + name + '"');
 			return a;
 		}
 
-		return Thelpers[name].call(model, a, b, c, d, e, f, g, h);
+		return fn.call(model, a, b, c, d, e, f, g, h);
 	};
 
 	Thelpers.encode = function(value) {
@@ -321,12 +322,13 @@
 		return value;
 	};
 
-	Tangular.render = function(template, model, repository) {
-		return new Template().compile(template)(model == null ? {} : model, repository);
+	Tangular.render = function(template, model, repository, helpers) {
+		var template = new Template().compile(template, helpers);
+		return template(helpers, model == null ? {} : model, repository);
 	};
 
-	Tangular.compile = function(template) {
-		return new Template().compile(template);
+	Tangular.compile = function(template, helpers) {
+		return new Template().compile(template, helpers);
 	};
 
 	Tangular.register = function(name, fn) {
