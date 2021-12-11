@@ -323,12 +323,12 @@
 	};
 
 	Tangular.render = function(template, model, repository, helpers) {
-		var template = new Template().compile(template, helpers);
-		return template(helpers, model == null ? {} : model, repository);
+		var template = new Template().compile(template);
+		return template(model == null ? {} : model, repository, helpers);
 	};
 
-	Tangular.compile = function(template, helpers) {
-		return new Template().compile(template, helpers);
+	Tangular.compile = function(template) {
+		return new Template().compile(template);
 	};
 
 	Tangular.register = function(name, fn) {
