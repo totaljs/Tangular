@@ -160,8 +160,17 @@
 			} else if (cmd !== 'continue' && cmd !== 'break' && cmd !== 'else') {
 
 				variable = parseInlineVariables(cmd);
+
+				var ishelper = false;
+
 				for (var i = 0; i < variable.length; i++) {
 					var v = variable[i];
+
+					if (v + '(' === cmd.substring(0, v.length + 1)) {
+						ishelper = true;
+						continue;
+					}
+
 					if (self.variables[v])
 						self.variables[v]++;
 					else
@@ -171,20 +180,34 @@
 				if (!variable.length)
 					variable = null;
 
-				if (cmd.indexOf('|') === -1)
+				var hindex = cmd.indexOf('|');
+				var fnhelper = null;
+
+				if (ishelper) {
+					fnhelper = cmd.substring(0, hindex === -1 ? cmd.length : hindex);
+					if (hindex === -1)
+						cmd = '';
+					else
+						cmd = '' + cmd.substring(index);
+				} else if (!ishelper && hindex === -1)
 					cmd += ' | encode';
 
 				helpers = cmd.split('|');
 				cmd = helpers[0];
 				helpers = helpers.slice(1);
+
+				if (ishelper)
+					helpers.unshift(fnhelper);
+
 				if (helpers.length) {
 					for (var i = 0; i < helpers.length; i++) {
 						var helper = helpers[i].trim();
+						var ishelperfirst = ishelper && !i;
 						index = helper.indexOf('(');
 						if (index === -1) {
-							helper = 'Thelpers.$execute($helpers,model,\'' + helper + '\',\7)';
+							helper = 'Thelpers.$execute($helpers,model,\'' + helper + '\',' + (ishelperfirst ? '' : '\7)');
 						} else
-							helper = 'Thelpers.$execute($helpers,model,\'' + helper.substring(0, index) + '\',\7,' + helper.substring(index + 1);
+							helper = 'Thelpers.$execute($helpers,model,\'' + helper.substring(0, index) + '\',' + (ishelperfirst ? '' : '\7,') + helper.substring(index + 1);
 						helpers[i] = helper;
 					}
 				} else
