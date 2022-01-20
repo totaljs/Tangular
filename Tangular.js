@@ -5,7 +5,7 @@
 
 	var Tangular = {};
 	var Thelpers = Tangular.helpers = {};
-	Tangular.version = 'v5.0.0';
+	Tangular.version = 'v5.0.1';
 	Tangular.cache = {};
 
 	W.Ta = W.Tangular = Tangular;
