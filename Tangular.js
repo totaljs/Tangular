@@ -24,6 +24,7 @@
 		var skip = 0;
 
 		for (var i = 0; i < line.length; i++) {
+
 			var c = line.charCodeAt(i);
 
 			if (!skip) {
@@ -82,6 +83,9 @@
 		var loops = [];
 
 		self.template = template;
+
+		template = template.replace(/\|\|/g, '\1');
+
 		self.variables = {};
 		self.commands = [];
 
@@ -218,6 +222,7 @@
 			}
 
 			self.commands.push({ index: self.commands.length, cmd: cmd, ifcount: ifcount, loopcount: loopcount, variable: variable, helpers: helpers, isloop: isloop, isif: isif, iscode: iscode });
+
 			return self.split;
 
 		}).split(self.split);
@@ -314,7 +319,7 @@
 			names.push('model.' + variables[i]);
 
 		var code = 'var tangular=function($helpers,$,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function(model,$,$helpers){try{return tangular(' + names.join(',') + ')}catch(e){console.error(\'Tangular error:\',e + \'\',$template)}}';
-		return (new Function('$text', '$template', code))(self.builder, self.template);
+		return (new Function('$text', '$template', code.replace(/\1/g, '||')))(self.builder, self.template);
 	};
 
 	Thelpers.$execute = function(helpers, model, name, a, b, c, d, e, f, g, h) {
