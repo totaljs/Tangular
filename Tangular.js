@@ -339,17 +339,23 @@
 
 	Thelpers.encode = function(value, type) {
 
-		if (type === 'json')
-			return JSON.stringify(value);
+		if (type) {
 
-		if (type === 'json2')
-			return JSON.stringify(value, null, '\t');
+			if (typeof(type) === 'function')
+				return type(value);
 
-		if (type === 'url' || type === 'urlencoded')
-			return encodeURIComponent(value);
+			if (type === 'json')
+				return JSON.stringify(value);
 
-		if (type === 'querify')
-			return QUERIFY(value);
+			if (type === 'json2')
+				return JSON.stringify(value, null, '\t');
+
+			if (type === 'url' || type === 'urlencoded')
+				return encodeURIComponent(value);
+
+			if (type === 'querify')
+				return QUERIFY(value);
+		}
 
 		return value == null ? '' : (value + '').replace(REG_ENCODE, function(c) {
 			switch (c) {
