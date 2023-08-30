@@ -1,11 +1,8 @@
 [![MIT License][license-image]][license-url]
 
-[![Support](https://www.totaljs.com/img/button-support.png)](https://www.totaljs.com/support/)
-
-- [__Live chat with professional support__](https://messenger.totaljs.com)
-- [__HelpDesk with professional support__](https://helpdesk.totaljs.com)
-
 # Tangular
+
+[![Made in EU](https://cdn.componentator.com/eu-small.png)](https://european-union.europa.eu/)
 
 > A simple template engine like Angular.js for JavaScript or node.js
 
