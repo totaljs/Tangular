@@ -1,0 +1,16 @@
+5.0.6
+
+- added `module.exports` for Node.js
+- added cache of compiled templates to `Tangular.render()` (limit `1000` templates)
+- improved performance of the `encode` helper
+- __changed__: the apostrophe `'` is encoded as `&#39;`
+- __changed__: `Math`, `JSON`, `RegExp`, `parseInt`, `parseFloat`, `isNaN`, `isFinite`, `NaN`, `Infinity`, `encodeURIComponent` and `decodeURIComponent` can't be used as names of model fields
+- fixed variables in expressions with a path, e.g. `{{ a.b + c }}` and `{{ if a.b > c.d }}`
+- fixed built-in objects and keywords, e.g. `{{ Math.round(price) }}` and `{{ if typeof(value) === 'string' }}`
+- fixed strings with a dot or with the `|` character, e.g. `{{ "12.5" | helper }}` and `{{ value | helper('a|b') }}`
+- fixed `$index` after a nested loop
+- fixed rewriting of a model field by a loop item with the same name
+- fixed possible collisions of internal names in nested loops
+- fixed custom tags with special characters, e.g. `Tangular.compile(template, '[[', ']]')`
+- fixed a compiled template executed with the `null` model
+- fixed the `querify` helper when it is not available

@@ -6,58 +6,127 @@
 	var Tangular = {};
 	var Thelpers = Tangular.helpers = {};
 
-	Tangular.version = 'v5.0.5';
+	Tangular.version = 'v5.0.6';
 	Tangular.cache = {};
 
 	W.Ta = W.Tangular = Tangular;
 	W.Thelpers = Thelpers;
 
-	var SKIP = { 'null': true, 'undefined': true, 'true': true, 'false': true, 'Object': 1, 'String': 1, 'Number': 1, 'Boolean': 1, 'Date': 1, 'Array': 1, 'window': 1, 'global': 1, 'arguments': 1, 'eval': 1, 'Function': 1, 'function': 1, 'var': 1, 'let': 1, 'const': 1, 'delete': 1 };
+	// Keywords and built-in objects can't be used as names of model fields
+	var SKIP = { 'null': true, 'undefined': true, 'true': true, 'false': true, 'Object': 1, 'String': 1, 'Number': 1, 'Boolean': 1, 'Date': 1, 'Array': 1, 'window': 1, 'global': 1, 'arguments': 1, 'eval': 1, 'Function': 1, 'function': 1, 'var': 1, 'let': 1, 'const': 1, 'delete': 1, 'typeof': 1, 'instanceof': 1, 'new': 1, 'in': 1, 'void': 1, 'this': 1, 'NaN': 1, 'Infinity': 1, 'Math': 1, 'JSON': 1, 'RegExp': 1, 'parseInt': 1, 'parseFloat': 1, 'isNaN': 1, 'isFinite': 1, 'encodeURIComponent': 1, 'decodeURIComponent': 1, '$index': 1 };
 	var REG_CMDFIND = /\{\{.*?\}\}/g;
 	var REG_CMDCLEAN = /\{\{|\}\}/g;
-	var REG_ENCODE = /[<>&"]/g;
+	var REG_ENCODE = /[<>&"']/g;
+	var REG_ENCODETEST = /[<>&"']/;
 	var REG_TRIM = /\n$/g;
+	var REG_ESCAPE = /[.*+?^${}()|[\]\\]/g;
 
+	// A path at the beginning of a command, e.g. "user.address.city" or "items[0].name"
+	var REG_PATH = /^[a-zA-Z_$][\w$]*(?:\[[^[\]]*\])*(?:\.[a-zA-Z_$][\w$]*(?:\[[^[\]]*\])*)+/;
+	var CACHELIMIT = 1000;
+	var cachecount = 0;
+
+	function isidentifier(c, first) {
+		return (c > 64 && c < 91) || (c > 96 && c < 123) || c === 95 || c === 36 || (!first && c > 47 && c < 58);
+	}
+
+	// Returns names of variables used in the expression
 	function parseInlineVariables(line, blacklist) {
 
-		var tmp = '';
 		var variables = [];
-		var skip = 0;
+		var length = line.length;
+		var prev = 0; // the last significant character
+		var i = 0;
 
-		for (var i = 0; i < line.length; i++) {
+		while (i < length) {
 
 			var c = line.charCodeAt(i);
 
-			if (!skip) {
-
-				if ((tmp && c > 47 && c < 58) || (c > 64 && c < 91) || (c > 96 && c < 123) || (c === 95 || c === 36)) {
-					tmp += line.charAt(i);
-					continue;
+			// A string: "`" or "'" or "\""
+			if (c === 96 || c === 34 || c === 39) {
+				i++;
+				while (i < length) {
+					var s = line.charCodeAt(i++);
+					if (s === 92)
+						i++;
+					else if (s === c)
+						break;
 				}
-
-				if (tmp) {
-					if (!SKIP[tmp] && variables.indexOf(tmp) === -1 && (!blacklist || blacklist.indexOf(tmp) === -1))
-						variables.push(tmp);
-					tmp = '';
-				}
+				prev = c;
+				continue;
 			}
 
-			if (c === 46 || c === 124) { // "." or "|"
-				skip = c;
-			} else if ((skip === 46 || skip === 124) && c === 40) { // ("." or "|") and "("
-				skip = 0;
-			} else if (c === 96 || c === 34 || c === 39) { // "`" or "'" or "\""
-				if (c === skip)
-					skip = 0;
-				else
-					skip = c;
+			// A number, e.g. 1.5 or 0xFF
+			if (c > 47 && c < 58) {
+				i++;
+				while (i < length && (isidentifier(line.charCodeAt(i)) || line.charCodeAt(i) === 46))
+					i++;
+				prev = c;
+				continue;
+			}
+
+			if (isidentifier(c, true)) {
+
+				var beg = i++;
+
+				while (i < length && isidentifier(line.charCodeAt(i)))
+					i++;
+
+				// A name after "." is a property and a name after "|" is a helper
+				if (prev !== 46 && prev !== 124) {
+					var name = line.substring(beg, i);
+					if (!SKIP[name] && variables.indexOf(name) === -1 && (!blacklist || blacklist.indexOf(name) === -1))
+						variables.push(name);
+				}
+
+				prev = c;
+				continue;
+			}
+
+			// White-spaces are skipped
+			if (c !== 32 && c !== 9 && c !== 10 && c !== 13)
+				prev = c;
+
+			i++;
+		}
+
+		return variables;
+	}
+
+	// Splits helpers "value | helper1 | helper2('a|b')"
+	function splitpipes(cmd) {
+
+		var arr = [];
+		var beg = 0;
+		var depth = 0;
+		var quote = 0;
+
+		for (var i = 0; i < cmd.length; i++) {
+
+			var c = cmd.charCodeAt(i);
+
+			if (quote) {
+				if (c === 92)
+					i++;
+				else if (c === quote)
+					quote = 0;
+				continue;
+			}
+
+			if (c === 96 || c === 34 || c === 39)
+				quote = c;
+			else if (c === 40 || c === 91 || c === 123)
+				depth++;
+			else if (c === 41 || c === 93 || c === 125)
+				depth--;
+			else if (c === 124 && depth <= 0) {
+				arr.push(cmd.substring(beg, i));
+				beg = i + 1;
 			}
 		}
 
-		if (tmp && !SKIP[tmp] && variables.indexOf(tmp) === -1 && (!blacklist || blacklist.indexOf(tmp) === -1))
-			variables.push(tmp);
-
-		return variables;
+		arr.push(cmd.substring(beg));
+		return arr;
 	}
 
 	Tangular.toArray = function(obj) {
@@ -86,6 +155,14 @@
 		var tmp;
 
 		if (tagbeg && tagend) {
+
+			// Tags without "\\" aren't regular expressions, so special characters must be escaped
+			if (tagbeg.indexOf('\\') === -1)
+				tagbeg = tagbeg.replace(REG_ESCAPE, '\\$&');
+
+			if (tagend.indexOf('\\') === -1)
+				tagend = tagend.replace(REG_ESCAPE, '\\$&');
+
 			reg_find = new RegExp(tagbeg + '.*?' + tagend, 'g');
 			reg_clean = new RegExp(tagbeg + '|' + tagend, 'g');
 		}
@@ -192,19 +269,16 @@
 				if (!variable.length)
 					variable = null;
 
-				var hindex = cmd.indexOf('|');
 				var fnhelper = null;
 
-				if (ishelper) {
-					fnhelper = cmd.substring(0, hindex === -1 ? cmd.length : hindex);
-					if (hindex === -1)
-						cmd = '';
-					else
-						cmd = '' + cmd.substring(index);
-				} else if (!ishelper && hindex === -1)
-					cmd += ' | encode';
+				helpers = splitpipes(cmd);
 
-				helpers = cmd.split('|');
+				if (ishelper) {
+					fnhelper = helpers[0];
+					helpers[0] = '';
+				} else if (helpers.length === 1)
+					helpers.push(' encode');
+
 				cmd = helpers[0];
 				helpers = helpers.slice(1);
 
@@ -243,22 +317,36 @@
 		return self.make();
 	};
 
+	// Makes a safe reading of the path at the beginning of the command: "a.b.c" --> "a==null?'':a.b==null?'':a.b.c"
 	Template.prototype.safe = function(cmd) {
 
-		var arr = cmd.split('.');
-		var output = [];
+		var match = cmd.match(REG_PATH);
+		if (!match)
+			return cmd;
 
-		for (var i = 1; i < arr.length; i++) {
-			var k = arr.slice(0, i).join('.');
-			output.push(k + '==null?\'\':');
+		var path = match[0];
+		var output = [];
+		var depth = 0;
+
+		for (var i = 0; i < path.length; i++) {
+			var c = path.charCodeAt(i);
+			if (c === 91)
+				depth++;
+			else if (c === 93)
+				depth--;
+			else if (c === 46 && !depth)
+				output.push(path.substring(0, i) + '==null?\'\':');
 		}
-		return output.join('') + arr.join('.');
+
+		return output.join('') + cmd;
 	};
 
 	Template.prototype.make = function() {
 
 		var self = this;
 		var builder = ['var $output=$text[0];var $tmp;var $index=0;'];
+		var loops = [];
+		var loopindex = 0;
 
 		for (var i = 0, length = self.commands.length; i < length; i++) {
 
@@ -271,14 +359,20 @@
 
 				if (cmd.isloop) {
 
-					var name = '$i' + Math.random().toString(16).substring(3, 6);
+					// Unique names within the template
+					var name = '$i' + (loopindex++);
 					var namea = name + 'a';
+					var names = name + 's';
+					var item = cmd.cmd.split(' ')[1];
 					var index = cmd.cmd.lastIndexOf(' in ');
 					if (index === -1)
 						index = cmd.cmd.lastIndexOf(' of ');
 					tmp = cmd.cmd.substring(index + 4).trim();
-					tmp = namea + '=' + self.safe(tmp) + ';if(!(' + namea + ' instanceof Array)){if(' + namea + '&&typeof(' + namea + ')===\'object\')' + namea + '=Tangular.toArray(' + namea + ')}if(' + namea + ' instanceof Array&&' + namea + '.length){for(var ' + name + '=0,' + name + 'l=' + namea + '.length;' + name + '<' + name + 'l;' + name + '++){$index=' + name + ';var ' + cmd.cmd.split(' ')[1] + '=' + namea + '[' + name + '];';
-					builder.push(tmp);
+					tmp = namea + '=' + self.safe(tmp) + ';if(!(' + namea + ' instanceof Array)){if(' + namea + '&&typeof(' + namea + ')===\'object\')' + namea + '=Tangular.toArray(' + namea + ')}if(' + namea + ' instanceof Array&&' + namea + '.length){for(var ' + name + '=0,' + name + 'l=' + namea + '.length;' + name + '<' + name + 'l;' + name + '++){$index=' + name + ';var ' + item + '=' + namea + '[' + name + '];';
+
+					// The item of the loop can have the same name as a field of the model, so its value is kept
+					builder.push('var ' + names + '=' + item + ';' + tmp);
+					loops.push({ name: name, backup: names, item: item });
 
 				} else if (cmd.isif) {
 					if (cmd.cmd.substring(0, 8) === 'else if ')
@@ -291,7 +385,9 @@
 							builder.push('}else{');
 							break;
 						case 'end':
-							builder.push('}}');
+							tmp = loops.pop();
+							// Restores the value of the item and the index of the parent loop
+							builder.push('}}' + (tmp ? (tmp.item + '=' + tmp.backup + ';') : '') + (loops.length ? ('$index=' + loops[loops.length - 1].name + ';') : ''));
 							break;
 						case 'fi':
 							builder.push('}');
@@ -332,7 +428,7 @@
 		for (var i = 0; i < self.builder.length; i++)
 			self.builder[i] = self.builder[i].replace(/\1/g, '||');
 
-		var code = 'var tangular=function($helpers,$,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function(model,$,$helpers){try{return tangular(' + names.join(',') + ')}catch(e){console.error(\'Tangular error:\',e + \'\',$template)}}';
+		var code = 'var tangular=function($helpers,$,model' + (variables.length ? (',' + variables.join(',')) : '') + '){' + builder.join('') + '};return function(model,$,$helpers){if(model==null)model={};try{return tangular(' + names.join(',') + ')}catch(e){console.error(\'Tangular error:\',e + \'\',$template)}}';
 		return (new Function('$text', '$template', code.replace(/\1/g, '||')))(self.builder, self.template);
 	};
 
@@ -365,27 +461,49 @@
 				return encodeURIComponent(value);
 
 			if (type === 'querify')
-				return QUERIFY(value);
+				return typeof(QUERIFY) === 'function' ? QUERIFY(value) : value;
 		}
 
-		return value == null ? '' : (value + '').replace(REG_ENCODE, function(c) {
-			switch (c) {
-				case '&': return '&amp;';
-				case '<': return '&lt;';
-				case '>': return '&gt;';
-				case '"': return '&quot;';
-			}
-			return c;
-		});
+		if (value == null)
+			return '';
+
+		value = value + '';
+
+		// The most of values don't contain any special character
+		return REG_ENCODETEST.test(value) ? value.replace(REG_ENCODE, encodechar) : value;
 	};
+
+	function encodechar(c) {
+		switch (c) {
+			case '&': return '&amp;';
+			case '<': return '&lt;';
+			case '>': return '&gt;';
+			case '"': return '&quot;';
+			case '\'': return '&#39;';
+		}
+		return c;
+	}
 
 	Thelpers.raw = function(value) {
 		return value;
 	};
 
 	Tangular.render = function(template, model, repository, helpers) {
-		var template = new Template().compile(template);
-		return template(model == null ? {} : model, repository, helpers);
+
+		var fn = Tangular.cache[template];
+
+		if (!fn) {
+
+			// Prevents a memory leak with dynamically generated templates
+			if (cachecount++ >= CACHELIMIT) {
+				Tangular.cache = {};
+				cachecount = 1;
+			}
+
+			fn = Tangular.cache[template] = new Template().compile(template);
+		}
+
+		return fn(model == null ? {} : model, repository, helpers);
 	};
 
 	Tangular.compile = function(template, tagbeg, tagend) {
@@ -396,5 +514,9 @@
 		Thelpers[name] = fn;
 		return Tangular;
 	};
+
+	// Node.js
+	if (typeof(module) !== 'undefined' && module.exports)
+		module.exports = Tangular;
 
 })(typeof(window)==='undefined'?global:window);
