@@ -1,5 +1,9 @@
 5.0.6
 
+===================================
+Version: 5.0.6
+===================================
+
 - added `module.exports` for Node.js
 - added cache of compiled templates to `Tangular.render()` (limit `1000` templates)
 - improved performance of the `encode` helper
